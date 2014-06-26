@@ -12,7 +12,7 @@ public class ModuleTest {
   private XtendCompilerTester compilerTester = XtendCompilerTester.newXtendCompilerTester(Module.class);
   
   @Test
-  public void testCompiler() {
+  public void testManifestProcessing() {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("import al.franzis.cheshire.Module");
     _builder.newLine();

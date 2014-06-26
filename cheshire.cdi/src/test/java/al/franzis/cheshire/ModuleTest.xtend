@@ -7,7 +7,7 @@ class ModuleTest {
 	extension XtendCompilerTester compilerTester = XtendCompilerTester.newXtendCompilerTester(Module)
 	
 	@Test
-	def void testCompiler() {
+	def void testManifestProcessing() {
 		'''
 			import al.franzis.cheshire.Module
 			

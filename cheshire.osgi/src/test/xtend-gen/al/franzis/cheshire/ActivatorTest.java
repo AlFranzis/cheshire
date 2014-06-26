@@ -12,11 +12,17 @@ public class ActivatorTest {
   private XtendCompilerTester compilerTester = XtendCompilerTester.newXtendCompilerTester(ModuleActivator.class);
   
   @Test
-  public void testCompiler() {
+  public void testActivatorProcessing() {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("import al.franzis.cheshire.ModuleActivator");
     _builder.newLine();
     _builder.append("import al.franzis.cheshire.ModuleStartMethod");
+    _builder.newLine();
+    _builder.append("import al.franzis.cheshire.ModuleStopMethod");
+    _builder.newLine();
+    _builder.append("import al.franzis.cheshire.ModuleContextMethod");
+    _builder.newLine();
+    _builder.append("import al.franzis.cheshire.IModuleContext");
     _builder.newLine();
     _builder.newLine();
     _builder.append("@ModuleActivator");
@@ -30,7 +36,30 @@ public class ActivatorTest {
     _builder.append("def void start() {");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("println(\"Start\"");
+    _builder.append("println(\"Start\")");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("@ModuleStopMethod");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("def void end() {");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("println(\"end\")");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("@ModuleContextMethod");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("def void setModuleContext(IModuleContext cxt) {");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("}");
