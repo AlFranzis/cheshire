@@ -19,7 +19,7 @@ public class ModuleActivatorExample implements ICDIModuleActivator {
   @ModuleStartMethod
   public void start() {
     IModule _module = this.moduleContext.getModule();
-    final URL resourceUrl = _module.getResource("someResource");
+    final URL resourceUrl = _module.getResource("/resource.xml");
     InputOutput.<URL>println(resourceUrl);
   }
   

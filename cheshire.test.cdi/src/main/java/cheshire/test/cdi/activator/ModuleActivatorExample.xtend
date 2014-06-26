@@ -13,7 +13,7 @@ class ModuleActivatorExample {
 	
 	@ModuleStartMethod
 	def void start() {
-		val URL resourceUrl = moduleContext.getModule().getResource( "someResource" )
+		val URL resourceUrl = moduleContext.getModule().getResource( "/resource.xml" )
 		
 		// do some individual magic
 		println( resourceUrl )
