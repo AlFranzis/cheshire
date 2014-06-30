@@ -1,10 +1,10 @@
 package cheshire.test.cdi.service
 
 import java.util.List
-import al.franzis.cheshire.service.ICDIServiceDefinition
 import java.util.Map
+import al.franzis.cheshire.service.IServiceDefinition
 
-class PluginBServiceDefinition implements ICDIServiceDefinition {
+class PluginBServiceDefinition implements IServiceDefinition {
 	
 	override def String name() {
 		"pluginA"

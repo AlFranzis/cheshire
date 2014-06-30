@@ -15,7 +15,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import al.franzis.cheshire.service.ICDIServiceDefinition;
+import al.franzis.cheshire.service.IServiceDefinition;
 import al.franzis.cheshire.service.IServiceContext;
 import al.franzis.cheshire.service.IServiceReference;
 import al.franzis.cheshire.service.ServiceActivationMethod;
@@ -27,7 +27,7 @@ public class CDIServiceFactory {
 	private BeanManager beanManager;
 	
 	@Inject
-	private Instance<ICDIServiceDefinition> serviceDefinitions;
+	private Instance<IServiceDefinition> serviceDefinitions;
 	
 	private Map<Class<?>,List<ServiceProviderContainer<?>>> services = new HashMap<>();
 	
@@ -38,7 +38,7 @@ public class CDIServiceFactory {
 	@PostConstruct
 	public void init() {
 		try {
-			for (ICDIServiceDefinition serviceDef : serviceDefinitions) {
+			for (IServiceDefinition serviceDef : serviceDefinitions) {
 				ServiceProviderContainer<?> container = new ServiceProviderContainer<>(serviceDef);
 
 				for (String typeName : serviceDef.providedServices()) {
@@ -117,11 +117,11 @@ public class CDIServiceFactory {
 	}
 	
 	private static class ServiceProviderContainer<S> {
-		private final ICDIServiceDefinition serviceDefinition;
+		private final IServiceDefinition serviceDefinition;
 		private final Class<S> implementationClass;
 		private final List<CDIServiceReference<S>> serviceInstances = new LinkedList<>();
 		
-		public ServiceProviderContainer(ICDIServiceDefinition serviceDefinition) {
+		public ServiceProviderContainer(IServiceDefinition serviceDefinition) {
 			this.serviceDefinition = serviceDefinition;
 			this.implementationClass = (Class<S>)getServiceClass(serviceDefinition);
 		}
@@ -134,11 +134,11 @@ public class CDIServiceFactory {
 			return serviceInstances;
 		}
 		
-		public ICDIServiceDefinition getServiceDefinition() {
+		public IServiceDefinition getServiceDefinition() {
 			return serviceDefinition;
 		}
 		
-		private Class<?> getServiceClass(ICDIServiceDefinition serviceDefinition) {
+		private Class<?> getServiceClass(IServiceDefinition serviceDefinition) {
 			try {
 				return Class.forName(serviceDefinition.implementation());
 			} catch (ClassNotFoundException e) {

@@ -3,7 +3,7 @@ package al.franzis.cheshire.service;
 import java.util.List;
 import java.util.Map;
 
-public interface ICDIServiceDefinition {
+public interface IServiceDefinition {
 	
 	public String name();
 

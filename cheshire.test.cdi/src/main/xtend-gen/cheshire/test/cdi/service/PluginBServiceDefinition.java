@@ -1,6 +1,6 @@
 package cheshire.test.cdi.service;
 
-import al.franzis.cheshire.service.ICDIServiceDefinition;
+import al.franzis.cheshire.service.IServiceDefinition;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.Collections;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("all")
-public class PluginBServiceDefinition implements ICDIServiceDefinition {
+public class PluginBServiceDefinition implements IServiceDefinition {
   public String name() {
     return "pluginA";
   }
