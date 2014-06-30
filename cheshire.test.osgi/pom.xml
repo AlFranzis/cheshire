@@ -44,7 +44,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.xtend</groupId>
@@ -56,5 +55,10 @@
           <artifactId>org.osgi.core</artifactId>
           <version>5.0.0</version>
         </dependency>
+        <dependency>
+	      <groupId>al.franzis.cheshire</groupId>
+          <artifactId>cheshire.osgi</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+	    </dependency>
 	</dependencies>
 </project>
