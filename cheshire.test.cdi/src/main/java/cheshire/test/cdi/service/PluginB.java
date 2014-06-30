@@ -1,9 +1,12 @@
 package cheshire.test.cdi.service;
 
-import javax.inject.Singleton;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
-@Singleton
+import al.franzis.cheshire.cdi.CDIModuleFramework;
+
 public class PluginB implements IPlugin {
+	private CDIModuleFramework moduleFramework;
 	
 	public PluginB() {
 		System.out.println("PluginB created");
@@ -12,6 +15,17 @@ public class PluginB implements IPlugin {
 	@Override
 	public void foo() {
 		System.out.println("PluginB.foo() called");		
+	}
+	
+	@Inject
+	private void setModuleFramework(CDIModuleFramework moduleFramework) {
+		this.moduleFramework = moduleFramework;
+	}
+
+	// GEN
+	@PostConstruct
+	private void init() {
+		moduleFramework.registerCDIService(this);
 	}
 
 }

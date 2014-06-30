@@ -42,9 +42,9 @@ class ModuleActivatorProcessor extends AbstractClassProcessor {
 		val implInterfaces = annotatedClass.implementedInterfaces + #[ cdiModuleActivatorType ]
 		annotatedClass.setImplementedInterfaces(implInterfaces)
 		
-		val moduleContextMethod = findAnnotatedMethod(annotatedClass, ModuleContextMethod)
-		val injectAnnotationType = context.findTypeGlobally("javax.inject.Inject")
-		moduleContextMethod.addAnnotation(injectAnnotationType)
+//		val moduleContextMethod = findAnnotatedMethod(annotatedClass, ModuleContextMethod)
+//		val injectAnnotationType = context.findTypeGlobally("javax.inject.Inject")
+//		moduleContextMethod.addAnnotation(injectAnnotationType)
 	}
 
 	override doGenerateCode(List<? extends ClassDeclaration> annotatedSourceElements,

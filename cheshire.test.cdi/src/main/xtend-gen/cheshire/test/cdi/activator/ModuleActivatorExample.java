@@ -8,17 +8,16 @@ import al.franzis.cheshire.ModuleStartMethod;
 import al.franzis.cheshire.ModuleStopMethod;
 import al.franzis.cheshire.cdi.ICDIModuleActivator;
 import java.net.URL;
-import javax.inject.Inject;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @ModuleActivator
 @SuppressWarnings("all")
 public class ModuleActivatorExample implements ICDIModuleActivator {
-  private IModuleContext moduleContext;
+  private static IModuleContext moduleContext;
   
   @ModuleStartMethod
   public void start() {
-    IModule _module = this.moduleContext.getModule();
+    IModule _module = ModuleActivatorExample.moduleContext.getModule();
     final URL resourceUrl = _module.getResource("/resource.xml");
     InputOutput.<URL>println(resourceUrl);
   }
@@ -28,8 +27,11 @@ public class ModuleActivatorExample implements ICDIModuleActivator {
   }
   
   @ModuleContextMethod
-  @Inject
   public void setModuleContext(final IModuleContext moduleContext) {
-    this.moduleContext = moduleContext;
+    ModuleActivatorExample.moduleContext = moduleContext;
+  }
+  
+  public static IModuleContext getModuleContext() {
+    return ModuleActivatorExample.moduleContext;
   }
 }

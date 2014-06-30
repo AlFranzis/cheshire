@@ -1,5 +1,9 @@
 package al.franzis.cheshire.service;
 
-public interface IServiceContext {
+import java.util.Map;
 
+public interface IServiceContext {
+	
+	public Map<String,String> getProperties();
+	
 }

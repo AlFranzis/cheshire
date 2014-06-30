@@ -1,10 +1,19 @@
 package al.franzis.cheshire.cdi;
 
-import javax.enterprise.inject.Alternative;
+import java.util.Map;
 
 import al.franzis.cheshire.service.IServiceContext;
 
-@Alternative
 public class CDIServiceContext implements IServiceContext {
+	private final Map<String,String> serviceProperties;
+	
+	public CDIServiceContext( Map<String,String> serviceProperties ) {
+		this.serviceProperties = serviceProperties;
+	}
+	
+	@Override
+	public Map<String, String> getProperties() {
+		return serviceProperties;
+	}
 
 }

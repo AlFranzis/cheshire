@@ -1,6 +1,5 @@
 package al.franzis.cheshire;
 
-import al.franzis.cheshire.ModuleContextMethod;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -14,7 +13,6 @@ import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableAnnotationReference;
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration;
-import org.eclipse.xtend.lib.macro.declaration.Type;
 import org.eclipse.xtend.lib.macro.declaration.TypeReference;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -27,9 +25,6 @@ public class ModuleActivatorProcessor extends AbstractClassProcessor {
     Iterable<? extends TypeReference> _implementedInterfaces = annotatedClass.getImplementedInterfaces();
     final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(Lists.<TypeReference>newArrayList(cdiModuleActivatorType)));
     annotatedClass.setImplementedInterfaces(implInterfaces);
-    final MutableMethodDeclaration moduleContextMethod = this.findAnnotatedMethod(annotatedClass, ModuleContextMethod.class);
-    final Type injectAnnotationType = context.findTypeGlobally("javax.inject.Inject");
-    moduleContextMethod.addAnnotation(injectAnnotationType);
   }
   
   public void doGenerateCode(final List<? extends ClassDeclaration> annotatedSourceElements, @Extension final CodeGenerationContext context) {

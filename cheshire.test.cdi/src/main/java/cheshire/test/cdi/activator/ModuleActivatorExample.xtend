@@ -9,7 +9,7 @@ import al.franzis.cheshire.ModuleContextMethod
 
 @ModuleActivator
 class ModuleActivatorExample {
-	private IModuleContext moduleContext
+	private static IModuleContext moduleContext
 	
 	@ModuleStartMethod
 	def void start() {
@@ -26,6 +26,10 @@ class ModuleActivatorExample {
 	
 	@ModuleContextMethod
 	def void setModuleContext( IModuleContext moduleContext ) {
-		this.moduleContext = moduleContext;
+		ModuleActivatorExample.moduleContext = moduleContext;
+	}
+	
+	def static IModuleContext getModuleContext() {
+		return moduleContext;
 	}
 }
