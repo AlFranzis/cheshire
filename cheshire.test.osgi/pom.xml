@@ -48,41 +48,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.0</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
-    <dependencies>
-        <dependency>
-            <groupId>org.eclipse.xtend</groupId>
-            <artifactId>org.eclipse.xtend.lib</artifactId>
-            <version>${xtend.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.xtend</groupId>
-            <artifactId>org.eclipse.xtend.standalone</artifactId>
-            <version>2.4.3</version>
-        </dependency>
-        <dependency>
-          <groupId>org.osgi</groupId>
-          <artifactId>org.osgi.core</artifactId>
-          <version>5.0.0</version>
-        </dependency>
-        <dependency>
-          <groupId>al.franzis.cheshire</groupId>
-          <artifactId>cheshire.osgi</artifactId>
-          <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 </project>
