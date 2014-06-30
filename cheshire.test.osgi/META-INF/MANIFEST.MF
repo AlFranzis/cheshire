@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: cheshire.test.osgi
+Bundle-SymbolicName: cheshire.test.osgi
+Bundle-Version: 0.0.1.qualifier
+Bundle-Vendor: Al Franzis
+Bundle-ActivationPolicy: lazy
+Import-Package: org.osgi.framework;version="1.7.0"
+Require-Bundle: cheshire.osgi

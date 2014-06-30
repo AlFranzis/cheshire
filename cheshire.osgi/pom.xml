@@ -3,12 +3,38 @@
   <groupId>al.franzis.cheshire</groupId>
   <artifactId>cheshire.osgi</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <packaging>eclipse-plugin</packaging>
   <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xtend.version>2.5.0</xtend.version>
+        <tycho-version>0.16.0</tycho-version>
 	</properties>
+	<repositories>
+	  <repository>
+			<id>kepler</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/kepler</url>
+		</repository>
+	</repositories>
 	<build>
 		<plugins>
+			<plugin>
+              <groupId>org.eclipse.tycho</groupId>
+              <artifactId>tycho-maven-plugin</artifactId>
+              <version>${tycho-version}</version>
+              <extensions>true</extensions>
+            </plugin>
+            <plugin>
+              <groupId>org.eclipse.tycho</groupId>
+              <artifactId>tycho-compiler-plugin</artifactId>
+              <version>${tycho-version}</version>
+              <configuration>
+                <source>1.7</source>
+                <target>1.7</target>
+                <!-- problems to set specific encoding as our source files use mixed encoding -->
+                <!-- <encoding>UTF-8</encoding> -->
+              </configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.eclipse.xtend</groupId>
 				<artifactId>xtend-maven-plugin</artifactId>
