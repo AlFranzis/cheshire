@@ -1,4 +1,4 @@
-package al.franzis.cheshire.test
+package al.franzis.cheshire.test.osgi
 
 import al.franzis.cheshire.Module
 

@@ -1,4 +1,4 @@
-package al.franzis.cheshire.test;
+package al.franzis.cheshire.test.osgi.activator;
 
 import al.franzis.cheshire.IModule;
 import al.franzis.cheshire.IModuleContext;
@@ -14,11 +14,11 @@ import org.osgi.framework.BundleContext;
 @ModuleActivator
 @SuppressWarnings("all")
 public class ModuleActivatorExample implements BundleActivator {
-  private IModuleContext moduleContext;
+  private static IModuleContext moduleContext;
   
   @ModuleStartMethod
   public void start() {
-    IModule _module = this.moduleContext.getModule();
+    IModule _module = ModuleActivatorExample.moduleContext.getModule();
     final URL resourceUrl = _module.getResource("someResource");
     InputOutput.<URL>println(resourceUrl);
   }
@@ -29,7 +29,11 @@ public class ModuleActivatorExample implements BundleActivator {
   
   @ModuleContextMethod
   public void setModuleContext(final IModuleContext context) {
-    this.moduleContext = this.moduleContext;
+    ModuleActivatorExample.moduleContext = ModuleActivatorExample.moduleContext;
+  }
+  
+  public static IModuleContext getModuleContext() {
+    return ModuleActivatorExample.moduleContext;
   }
   
   public void start(final BundleContext bundleContext) {

@@ -1,4 +1,4 @@
-package al.franzis.cheshire.test.activator;
+package al.franzis.cheshire.test.osgi.activator;
 
 import java.net.URL;
 
