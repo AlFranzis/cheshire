@@ -52,7 +52,7 @@ public class ModuleActivatorProcessor extends AbstractClassProcessor {
           public CharSequence compile(final CompilationStrategy.CompilationContext it) {
             StringConcatenation _builder = new StringConcatenation();
             _builder.append(moduleContextMethodName, "");
-            _builder.append("( new al.franzis.cheshire.osgi.OSGiModuleContext( bundleContext ) );");
+            _builder.append("( al.franzis.cheshire.osgi.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );");
             _builder.newLineIfNotEmpty();
             _builder.append(startMethodName, "");
             _builder.append("();");

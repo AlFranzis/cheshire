@@ -7,11 +7,14 @@ import java.util.Enumeration;
 import org.osgi.framework.Bundle;
 
 import al.franzis.cheshire.IModule;
+import al.franzis.cheshire.IModuleContext;
 
 public class OSGiModule implements IModule {
 	private final Bundle bundle;
+	private final IModuleContext moduleContext;
 	
-	public OSGiModule( Bundle bundle ) {
+	public OSGiModule( IModuleContext moduleContext, Bundle bundle ) {
+		this.moduleContext = moduleContext;
 		this.bundle = bundle;
 	}
 
@@ -30,6 +33,11 @@ public class OSGiModule implements IModule {
 
 	public String getName() {
 		return bundle.getSymbolicName();
+	}
+
+	@Override
+	public IModuleContext getModuleContext() {
+		return moduleContext;
 	}
 	
 	

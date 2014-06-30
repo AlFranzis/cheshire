@@ -37,7 +37,7 @@ public class ModuleActivatorExample implements BundleActivator {
   }
   
   public void start(final BundleContext bundleContext) {
-    setModuleContext( new al.franzis.cheshire.osgi.OSGiModuleContext( bundleContext ) );
+    setModuleContext( al.franzis.cheshire.osgi.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );
     start();
   }
   

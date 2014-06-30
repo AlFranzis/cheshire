@@ -63,7 +63,7 @@ class ModuleActivatorProcessor extends AbstractClassProcessor {
 //			addAnnotation(overrideAnnotationType)
       		addParameter( "bundleContext", osgiBundleContextType )
       		body = ['''
-      		«moduleContextMethodName»( new al.franzis.cheshire.osgi.OSGiModuleContext( bundleContext ) );
+      		«moduleContextMethodName»( al.franzis.cheshire.osgi.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );
       		«startMethodName»();
       		''']
       	]

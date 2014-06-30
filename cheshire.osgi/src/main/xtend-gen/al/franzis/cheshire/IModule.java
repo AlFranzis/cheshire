@@ -1,5 +1,6 @@
 package al.franzis.cheshire;
 
+import al.franzis.cheshire.IModuleContext;
 import java.net.URL;
 import java.util.Enumeration;
 
@@ -10,4 +11,6 @@ public interface IModule {
   public abstract Enumeration<URL> getResources(final String name);
   
   public abstract String getName();
+  
+  public abstract IModuleContext getModuleContext();
 }
