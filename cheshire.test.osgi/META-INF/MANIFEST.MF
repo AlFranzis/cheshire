@@ -5,5 +5,10 @@ Bundle-SymbolicName: cheshire.test.osgi
 Bundle-Version: 0.0.1.qualifier
 Bundle-Vendor: Al Franzis
 Bundle-ActivationPolicy: lazy
-Import-Package: org.osgi.framework;version="1.7.0"
+Import-Package: org.junit;version="4.10.0",
+ org.osgi.framework;version="1.7.0"
 Require-Bundle: cheshire.osgi
+Bundle-Activator: al.franzis.cheshire.test.osgi.activator.ModuleActivatorExample
+Service-Component: OSGI-INF/pluginA.xml,
+ OSGI-INF/pluginManager.xml,
+ OSGI-INF/pluginB.xml

@@ -3,7 +3,7 @@
   <groupId>al.franzis.cheshire</groupId>
   <artifactId>cheshire.test.osgi</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>eclipse-plugin</packaging>
+  <packaging>eclipse-test-plugin</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <xtend.version>2.5.0</xtend.version>
@@ -47,6 +47,22 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <configuration>
+          <!--
+          <testFailureIgnore>true</testFailureIgnore>
+          -->
+          <includes>
+            <include>**/*Tests.java</include>
+            <include>**/*Test.java</include>
+            <include>**/Test*.java</include>
+            <include>**/*TestCase.java</include>
+          </includes>
+        </configuration>
       </plugin>
     </plugins>
   </build>

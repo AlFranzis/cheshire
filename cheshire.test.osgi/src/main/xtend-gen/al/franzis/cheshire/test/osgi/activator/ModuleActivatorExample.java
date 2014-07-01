@@ -29,7 +29,7 @@ public class ModuleActivatorExample implements BundleActivator {
   
   @ModuleContextMethod
   public void setModuleContext(final IModuleContext context) {
-    ModuleActivatorExample.moduleContext = ModuleActivatorExample.moduleContext;
+    ModuleActivatorExample.moduleContext = context;
   }
   
   public static IModuleContext getModuleContext() {

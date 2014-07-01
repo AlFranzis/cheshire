@@ -2,6 +2,7 @@ package al.franzis.cheshire.test.osgi.service;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import al.franzis.cheshire.IModuleContext;
@@ -17,5 +18,6 @@ public class OSGiServiceTest {
 		IPluginManager pluginManager = moduleContext.getService(serviceRef);
 		List<IPlugin> plugins = pluginManager.getPlugins();
 		System.out.println("Plugins known to PluginManager: " + plugins);
+		Assert.assertEquals(2, plugins.size());
 	}
 }

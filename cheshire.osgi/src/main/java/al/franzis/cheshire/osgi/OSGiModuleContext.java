@@ -73,7 +73,7 @@ public class OSGiModuleContext implements IModuleContext {
 	}
 	
 	private static <S> ServiceReference<S> getOSGiServiceRef(IServiceReference<S> serviceReference) {
-		if(serviceReference instanceof OSGiServiceReference<?>)
+		if(!(serviceReference instanceof OSGiServiceReference<?>))
 			throw new IllegalArgumentException( "Expected OSGi service reference type, but was: " + serviceReference.getClass().toString());
 		
 		OSGiServiceReference<S> serviceRef = (OSGiServiceReference<S>)serviceReference;
