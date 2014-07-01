@@ -20,7 +20,7 @@ public class ModuleActivatorExample implements BundleActivator {
   public void start() {
     IModule _module = ModuleActivatorExample.moduleContext.getModule();
     final URL resourceUrl = _module.getResource("someResource");
-    InputOutput.<URL>println(resourceUrl);
+    InputOutput.<String>println(("Resource URL: " + resourceUrl));
   }
   
   @ModuleStopMethod

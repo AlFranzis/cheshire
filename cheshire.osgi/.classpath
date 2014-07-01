@@ -17,9 +17,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/aopalliance-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/guava-14.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/guice-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/hamcrest-core-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/javax.inject-1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/junit-4.10.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.xtend.lib-2.5.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.xtend.standalone-2.4.3.jar"/>

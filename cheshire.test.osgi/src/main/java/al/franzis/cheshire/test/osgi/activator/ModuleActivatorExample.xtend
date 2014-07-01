@@ -15,7 +15,7 @@ class ModuleActivatorExample {
 	def void start() {
 		val URL resourceUrl = ModuleActivatorExample.moduleContext.getModule().getResource( "someResource" )
 		// do some individual magic
-		println( resourceUrl )
+		println( "Resource URL: " + resourceUrl )
 	}
 	
 	@ModuleStopMethod
