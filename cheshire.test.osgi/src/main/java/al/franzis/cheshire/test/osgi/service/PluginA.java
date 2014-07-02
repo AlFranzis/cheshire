@@ -1,5 +1,6 @@
 package al.franzis.cheshire.test.osgi.service;
 
+import al.franzis.cheshire.service.Service;
 
 public class PluginA implements IPlugin {
 
