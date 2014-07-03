@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="al.franzis.cheshire.test.osgi.service.PluginC">
-   				<implementation class="al.franzis.cheshire.test.osgi.service.PluginC"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="cheshire.test.cdi.service.PluginManager2">
+   				<implementation class="cheshire.test.cdi.service.PluginManager2"/>
    				<service>
       				<provide interface="s"/>
    				</service>

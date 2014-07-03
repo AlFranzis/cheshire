@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("all")
-public class PluginManagerServiceDefinition implements IServiceDefinition {
+public class PluginManagerServiceDefinition2 implements IServiceDefinition {
   public String name() {
     return "pluginManager";
   }

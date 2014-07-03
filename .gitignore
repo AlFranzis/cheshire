@@ -14,5 +14,6 @@ hs_err_pid*
 .settings
 target
 bin
+generated-sources
 # xtend generation files #
 *._trace

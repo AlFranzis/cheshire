@@ -1,17 +1,17 @@
-package cheshire.test.cdi.service
+package al.franzis.cheshire.test.osgi.service
 
 import java.util.List
 import java.util.Map
 import al.franzis.cheshire.service.IServiceDefinition
 
-class PluginManagerServiceDefinition implements IServiceDefinition {
+class PluginManagerServiceDefinition2 implements IServiceDefinition {
 	
 	override def String name() {
-		"pluginManager"
+		"pluginManager2"
 	}
 	
 	override def String implementation() {
-		"cheshire.test.cdi.service.PluginManager"
+		"cheshire.test.cdi.service.PluginManager2"
 	}
 	
 	override def List<String> referencedServices() {
