@@ -1,5 +1,8 @@
 package al.franzis.cheshire.service
 
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.io.OutputStream
 import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
@@ -7,6 +10,8 @@ import java.lang.annotation.Target
 import java.util.HashMap
 import java.util.List
 import java.util.Map
+import java.util.jar.Attributes
+import java.util.jar.Manifest
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.CodeGenerationContext
@@ -14,6 +19,7 @@ import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MethodDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
+import org.eclipse.xtend.lib.macro.file.Path
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -45,7 +51,6 @@ annotation Service {
 class ServiceProcessor extends AbstractClassProcessor {
 	
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-	
 	}
 
 	override doGenerateCode(List<? extends ClassDeclaration> annotatedSourceElements, extension CodeGenerationContext context) {
@@ -57,6 +62,10 @@ class ServiceProcessor extends AbstractClassProcessor {
 			context.mkdir( osgiInfPath )
 			val file = osgiInfPath.append(clazz.simpleName + ".xml")
 			
+			val rel = projectPath.relativize(file)
+			
+			writeManifest(projectPath, rel, context)
+			
 			val serviceInfo = parseServiceDefinition(clazz,Service)
 			file.contents = '''
 				<?xml version="1.0" encoding="UTF-8"?>
@@ -67,12 +76,39 @@ class ServiceProcessor extends AbstractClassProcessor {
       					<provide interface="«providedService»"/>
       				«ENDFOR»
    				</service>
+   				
    				«FOR refService : serviceInfo.referencedServices»
    					<reference bind="«refService.bindMethodName»" cardinality="0..n" interface="«refService.name»" name="IPlugin" policy="static"/>
 				«ENDFOR»
 				</scr:component>
 			'''
+			
 		}
+	}
+	
+	private def writeManifest(Path projectPath, Path osgiServiceFile, extension CodeGenerationContext context) {
+		val manifestFile = projectPath.append("META-INF").append("MANIFEST.MF")
+
+		val InputStream inStream = manifestFile.contentsAsStream
+		val Manifest manifest = new Manifest(inStream)
+		val Attributes attributes = manifest.mainAttributes
+		inStream.close
+		
+		var serviceComponents = attributes.getValue("Service-Component")
+		if ( serviceComponents != null)
+			serviceComponents + "," + osgiServiceFile.toString
+		else
+			serviceComponents = osgiServiceFile.toString
+			
+		// write manifest values
+		attributes.put(new Attributes.Name("Service-Component"), serviceComponents)
+
+		val OutputStream out = new ByteArrayOutputStream()
+		manifest.write(out)
+		out.close
+
+		val String manifestContent = out.toString
+		context.setContents(manifestFile, manifestContent)
 	}
 	
 	private def ServiceInfo parseServiceDefinition(ClassDeclaration annotatedClass, Class<?> annotation) {

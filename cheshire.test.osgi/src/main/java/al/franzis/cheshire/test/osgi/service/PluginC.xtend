@@ -2,7 +2,13 @@ package al.franzis.cheshire.test.osgi.service
 
 import al.franzis.cheshire.service.Service
 
-@Service(definition=PluginCServiceDefinition)
+@Service(definition=typeof(PluginCServiceDefinition), 
+	definitionName="PluginCServiceDefintion",
+	name="PluginManager2",
+	providedServices= #["cheshire.test.cdi.service.IPlugin"],
+	referencedServices=#["cheshire.test.cdi.service.IPlugin"],
+	properties=#[ "Prop1", "Value1", "Prop2", "Value2"]
+)
 class PluginC implements IPlugin {
 	
 	def PluginC() {

@@ -13,4 +13,9 @@ import org.eclipse.xtend.lib.macro.Active;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Service {
   public Class<? extends IServiceDefinition> definition();
+  public String definitionName();
+  public String name();
+  public String[] referencedServices();
+  public String[] providedServices();
+  public String[] properties();
 }

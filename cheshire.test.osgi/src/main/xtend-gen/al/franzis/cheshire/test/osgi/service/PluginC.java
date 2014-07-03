@@ -5,7 +5,7 @@ import al.franzis.cheshire.test.osgi.service.IPlugin;
 import al.franzis.cheshire.test.osgi.service.PluginCServiceDefinition;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 
-@Service(definition = PluginCServiceDefinition.class)
+@Service(definition = PluginCServiceDefinition.class, definitionName = "PluginCServiceDefintion", name = "PluginManager2", providedServices = { "cheshire.test.cdi.service.IPlugin" }, referencedServices = { "cheshire.test.cdi.service.IPlugin" }, properties = { "Prop1", "Value1", "Prop2", "Value2" })
 @SuppressWarnings("all")
 public class PluginC implements IPlugin {
   public String PluginC() {

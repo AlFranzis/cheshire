@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 
-@Service(definition = PluginManagerServiceDefinition2.class)
+@Service(definition = PluginManagerServiceDefinition2.class, definitionName = "PluginManagerServiceDefintion2", name = "PluginManager2", providedServices = { "cheshire.test.cdi.service.IPluginManager" }, referencedServices = { "cheshire.test.cdi.service.IPlugin" }, properties = { "Prop1", "Value1", "Prop2", "Value2" })
 @SuppressWarnings("all")
 public class PluginManager2 implements IPluginManager {
   private final ArrayList<IPlugin> plugins = new Function0<ArrayList<IPlugin>>() {

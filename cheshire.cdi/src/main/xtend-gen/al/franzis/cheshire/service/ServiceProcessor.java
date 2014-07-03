@@ -5,10 +5,15 @@ import al.franzis.cheshire.service.Service;
 import al.franzis.cheshire.service.ServiceBindMethod;
 import al.franzis.cheshire.service.ServiceInfo;
 import com.google.common.base.Objects;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor;
 import org.eclipse.xtend.lib.macro.CodeGenerationContext;
 import org.eclipse.xtend.lib.macro.TransformationContext;
@@ -23,6 +28,7 @@ import org.eclipse.xtend.lib.macro.declaration.TypeReference;
 import org.eclipse.xtend.lib.macro.file.Path;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.InputOutput;
@@ -45,6 +51,8 @@ public class ServiceProcessor extends AbstractClassProcessor {
         String _simpleName = clazz.getSimpleName();
         String _plus = (_simpleName + ".xml");
         final Path file = osgiInfPath.append(_plus);
+        final Path rel = projectPath.relativize(file);
+        this.writeManifest(projectPath, rel, context);
         final ServiceInfo serviceInfo = this.parseServiceDefinition(clazz, Service.class);
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -75,6 +83,8 @@ public class ServiceProcessor extends AbstractClassProcessor {
         _builder.append("   \t\t\t\t");
         _builder.append("</service>");
         _builder.newLine();
+        _builder.append("   \t\t\t\t");
+        _builder.newLine();
         {
           ReferencedServiceInfo[] _referencedServices = serviceInfo.getReferencedServices();
           for(final ReferencedServiceInfo refService : _referencedServices) {
@@ -93,6 +103,37 @@ public class ServiceProcessor extends AbstractClassProcessor {
         _builder.newLine();
         context.setContents(file, _builder);
       }
+    }
+  }
+  
+  private void writeManifest(final Path projectPath, final Path osgiServiceFile, @Extension final CodeGenerationContext context) {
+    try {
+      Path _append = projectPath.append("META-INF");
+      final Path manifestFile = _append.append("MANIFEST.MF");
+      final InputStream inStream = context.getContentsAsStream(manifestFile);
+      Manifest _manifest = new Manifest(inStream);
+      final Manifest manifest = _manifest;
+      final Attributes attributes = manifest.getMainAttributes();
+      inStream.close();
+      String serviceComponents = attributes.getValue("Service-Component");
+      boolean _notEquals = (!Objects.equal(serviceComponents, null));
+      if (_notEquals) {
+        String _string = osgiServiceFile.toString();
+        /* ((serviceComponents + ",") + _string); */
+      } else {
+        String _string_1 = osgiServiceFile.toString();
+        serviceComponents = _string_1;
+      }
+      Attributes.Name _name = new Attributes.Name("Service-Component");
+      attributes.put(_name, serviceComponents);
+      ByteArrayOutputStream _byteArrayOutputStream = new ByteArrayOutputStream();
+      final OutputStream out = _byteArrayOutputStream;
+      manifest.write(out);
+      out.close();
+      final String manifestContent = out.toString();
+      context.setContents(manifestFile, manifestContent);
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
   }
   
