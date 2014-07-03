@@ -2,8 +2,7 @@ package al.franzis.cheshire.test.osgi.service
 
 import al.franzis.cheshire.service.Service
 
-@Service(definition=typeof(PluginCServiceDefinition), 
-	definitionName="PluginCServiceDefintion",
+@Service(
 	name="PluginManager2",
 	providedServices= #["cheshire.test.cdi.service.IPlugin"],
 	referencedServices=#["cheshire.test.cdi.service.IPlugin"],

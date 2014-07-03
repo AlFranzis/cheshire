@@ -5,8 +5,7 @@ import java.util.List
 import al.franzis.cheshire.service.ServiceBindMethod
 import al.franzis.cheshire.service.Service
 
-@Service(definition=typeof(PluginManagerServiceDefinition2), 
-	definitionName="PluginManagerServiceDefintion2",
+@Service(
 	name="PluginManager2",
 	providedServices= #["cheshire.test.cdi.service.IPluginManager"],
 	referencedServices=#["cheshire.test.cdi.service.IPlugin"],

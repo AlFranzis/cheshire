@@ -40,8 +40,6 @@ annotation ServiceUnbindMethod {
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 annotation Service {
-	Class<? extends IServiceDefinition> definition
-	String definitionName
 	String name
 	String[] referencedServices
 	String[] providedServices

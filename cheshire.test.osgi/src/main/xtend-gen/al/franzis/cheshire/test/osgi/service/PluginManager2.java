@@ -4,12 +4,11 @@ import al.franzis.cheshire.service.Service;
 import al.franzis.cheshire.service.ServiceBindMethod;
 import al.franzis.cheshire.test.osgi.service.IPlugin;
 import al.franzis.cheshire.test.osgi.service.IPluginManager;
-import al.franzis.cheshire.test.osgi.service.PluginManagerServiceDefinition2;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 
-@Service(definition = PluginManagerServiceDefinition2.class, definitionName = "PluginManagerServiceDefintion2", name = "PluginManager2", providedServices = { "cheshire.test.cdi.service.IPluginManager" }, referencedServices = { "cheshire.test.cdi.service.IPlugin" }, properties = { "Prop1", "Value1", "Prop2", "Value2" })
+@Service(name = "PluginManager2", providedServices = { "cheshire.test.cdi.service.IPluginManager" }, referencedServices = { "cheshire.test.cdi.service.IPlugin" }, properties = { "Prop1", "Value1", "Prop2", "Value2" })
 @SuppressWarnings("all")
 public class PluginManager2 implements IPluginManager {
   private final ArrayList<IPlugin> plugins = new Function0<ArrayList<IPlugin>>() {
