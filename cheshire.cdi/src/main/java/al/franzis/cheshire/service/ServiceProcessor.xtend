@@ -4,14 +4,16 @@ import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
+import java.util.HashMap
 import java.util.List
+import java.util.Map
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.CodeGenerationContext
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
+import org.eclipse.xtend.lib.macro.declaration.MethodDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
-import org.eclipse.xtext.common.types.JvmType
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -35,14 +37,15 @@ annotation Service {
 	Class<? extends IServiceDefinition> definition
 	String definitionName
 	String name
-	Class<?>[] referencedServices
-	Class<?>[] providedServices
+	String[] referencedServices
+	String[] providedServices
 	String[] properties
 }
 
 class ServiceProcessor extends AbstractClassProcessor {
 	
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
+	
 	}
 
 	override doGenerateCode(List<? extends ClassDeclaration> annotatedSourceElements, extension CodeGenerationContext context) {
@@ -51,47 +54,85 @@ class ServiceProcessor extends AbstractClassProcessor {
 			
 			val projectPath = context.getProjectFolder(filePath)
 			val osgiInfPath = projectPath.append("OSGI-INF");
-			val success = context.mkdir( osgiInfPath )
+			context.mkdir( osgiInfPath )
 			val file = osgiInfPath.append(clazz.simpleName + ".xml")
 			
-//			val file = filePath.targetFolder.append(clazz.qualifiedName.replace('.', '/') + ".xml")
-			parseServiceDefinition(clazz,Service)
+			val serviceInfo = parseServiceDefinition(clazz,Service)
 			file.contents = '''
 				<?xml version="1.0" encoding="UTF-8"?>
-				<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="«clazz.qualifiedName»">
+				<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="«serviceInfo.name»">
    				<implementation class="«clazz.qualifiedName»"/>
    				<service>
-      				<provide interface="s"/>
+   					«FOR providedService : serviceInfo.providedServices»
+      					<provide interface="«providedService»"/>
+      				«ENDFOR»
    				</service>
-   				<reference bind="addPlugin" cardinality="0..n" interface="al.franzis.cheshire.test.osgi.service.IPlugin" name="IPlugin" policy="static"/>
+   				«FOR refService : serviceInfo.referencedServices»
+   					<reference bind="«refService.bindMethodName»" cardinality="0..n" interface="«refService.name»" name="IPlugin" policy="static"/>
+				«ENDFOR»
 				</scr:component>
 			'''
-		
-		
 		}
 	}
 	
-	private def void parseServiceDefinition(ClassDeclaration annotatedClass, Class<?> annotation) {
+	private def ServiceInfo parseServiceDefinition(ClassDeclaration annotatedClass, Class<?> annotation) {
 		val serviceAnnotation = annotatedClass.annotations.findFirst( [ a | a.annotationTypeDeclaration.simpleName == annotation.simpleName ] ) 
 
 		val serviceName = serviceAnnotation.getValue("name") as String
 		println( "Service name: " + serviceName)
 		
-//		val JvmType[] providedServices = serviceAnnotation.getValue("providedServices") as JvmType[];
-//		for ( JvmType providedService : providedServices) {
-//			println( providedService.qualifiedName )
-//		}
-//		
-//		val JvmType[] referencedServices = serviceAnnotation.getValue("referencedServices") as JvmType[];
-//		for ( JvmType referencedService : referencedServices) {
-//			println( referencedService.qualifiedName )
-//		}
-//		
-//		val String[] properties = serviceAnnotation.getValue("properties") as String[];
-//		println( "Service properties: " + properties)
+		val String[] providedServicesNames = serviceAnnotation.getValue("providedServices") as String[];
+		println(providedServicesNames)
+		
+		val String[] referencedServicesNames = serviceAnnotation.getValue("referencedServices") as String[];
+		println(referencedServicesNames)
+		
+		val Map<String,String> bindMethodMap = getBindMethodsMap(annotatedClass)
+		val List<ReferencedServiceInfo> referencedServices = referencedServicesNames.map[ sn | 
+			val bindMethodName = bindMethodMap.get(sn)
+			new ReferencedServiceInfo(sn, bindMethodName)
+		]
+
+		val String[] properties = serviceAnnotation.getValue("properties") as String[];
+		val Map<String,String> propertiesMap = new HashMap();
+	
+		var i = -1;
+		while(i+2 < properties.length) {
+			val k = i + 1;
+			val v = i + 2;
+			i = i + 2;
+			propertiesMap.put( properties.get(k), properties.get(v))
+		}
+		println( "Service properties: " + propertiesMap)
+		
+		new ServiceInfo(serviceName, referencedServices, providedServicesNames, propertiesMap)
 	}
 	
+	private def Map<String,String> getBindMethodsMap( ClassDeclaration clazzDeclaration ) {
+		val Map<String,String> bindMethodsMap = new HashMap();
+		for(MethodDeclaration method : findAnnotatedMethod(clazzDeclaration, ServiceBindMethod)) {
+			bindMethodsMap.put(method.parameters.iterator().next.type.name, method.simpleName)
+		}
+		bindMethodsMap
+	}
 	
+	private def List<MethodDeclaration> findAnnotatedMethod( ClassDeclaration annotatedClass, Class<?> annotation ) {
+		val List<? extends MethodDeclaration> annotatedMethods = annotatedClass.declaredMethods.filter([m | m.annotations.exists( [ a|a.annotationTypeDeclaration.simpleName == annotation.simpleName])]).toList
+		annotatedMethods as List<MethodDeclaration>
+	}
 	
-	
+}
+
+@Data
+class ServiceInfo {
+	String name
+	ReferencedServiceInfo[] referencedServices
+	String[] providedServices
+	Map<String,String> properties
+}
+
+@Data
+class ReferencedServiceInfo {
+	String name
+	String bindMethodName
 }

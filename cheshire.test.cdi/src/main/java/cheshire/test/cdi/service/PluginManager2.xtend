@@ -8,8 +8,8 @@ import al.franzis.cheshire.service.Service
 @Service(definition=typeof(PluginManagerServiceDefinition2), 
 	definitionName="PluginManagerServiceDefintion2",
 	name="PluginManager2",
-	providedServices= #[ typeof(IPluginManager) ],
-	referencedServices=#[typeof(IPlugin)],
+	providedServices= #["cheshire.test.cdi.service.IPluginManager"],
+	referencedServices=#["cheshire.test.cdi.service.IPlugin"],
 	properties=#[ "Prop1", "Value1", "Prop2", "Value2"]
 )
 class PluginManager2 implements IPluginManager {

@@ -15,7 +15,7 @@ public @interface Service {
   public Class<? extends IServiceDefinition> definition();
   public String definitionName();
   public String name();
-  public Class<? extends Object>[] referencedServices();
-  public Class<? extends Object>[] providedServices();
+  public String[] referencedServices();
+  public String[] providedServices();
   public String[] properties();
 }

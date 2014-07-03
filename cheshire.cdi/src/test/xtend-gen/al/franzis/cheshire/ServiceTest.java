@@ -111,10 +111,10 @@ public class ServiceTest {
     _builder.append("name=\"PluginManager2\",");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("providedServices= #[typeof(IPluginManager)],");
+    _builder.append("providedServices= #[\"IPluginManager\"],");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("referencedServices=#[typeof(IPlugin)],");
+    _builder.append("referencedServices=#[\"IPlugin\"],");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("properties=#[\"Prop1\", \"Value1\", \"Prop2\", \"Value2\"])");

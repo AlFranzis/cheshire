@@ -50,8 +50,8 @@ class ServiceTest {
 			@Service(definition=typeof(PluginManagerServiceDefinition2), 
 				definitionName="PluginManagerServiceDefintion2",
 				name="PluginManager2",
-				providedServices= #[typeof(IPluginManager)],
-				referencedServices=#[typeof(IPlugin)],
+				providedServices= #["IPluginManager"],
+				referencedServices=#["IPlugin"],
 				properties=#["Prop1", "Value1", "Prop2", "Value2"])
 			class PluginManager2 implements IPluginManager {
 				val plugins = new ArrayList<IPlugin>()
