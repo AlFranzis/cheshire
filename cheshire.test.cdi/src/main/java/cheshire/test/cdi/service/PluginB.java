@@ -4,8 +4,16 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import al.franzis.cheshire.cdi.CDIModuleFramework;
+import al.franzis.cheshire.service.IServiceDefinition;
+import al.franzis.cheshire.service.Service;
 
-public class PluginB implements IPlugin {
+@Service(
+		name="PluginB",
+		providedServices={"cheshire.test.cdi.service.IPlugin"},
+		referencedServices={},
+		properties={"Prop1", "Value1", "Prop2", "Value2"}
+	)
+public class PluginB implements IPlugin, IServiceDefinition {
 	private CDIModuleFramework moduleFramework;
 	
 	public PluginB() {

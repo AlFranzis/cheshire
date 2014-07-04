@@ -10,10 +10,18 @@ import javax.inject.Inject;
 
 import al.franzis.cheshire.cdi.CDIModuleFramework;
 import al.franzis.cheshire.service.IServiceContext;
+import al.franzis.cheshire.service.IServiceDefinition;
+import al.franzis.cheshire.service.Service;
 import al.franzis.cheshire.service.ServiceActivationMethod;
 import al.franzis.cheshire.service.ServiceBindMethod;
 
-public class PluginManager implements IPluginManager {
+@Service(
+		name="PluginManager",
+		providedServices={"cheshire.test.cdi.service.IPluginManager"},
+		referencedServices={"cheshire.test.cdi.service.IPlugin"},
+		properties={"Prop1", "Value1", "Prop2", "Value2"}
+	)
+public class PluginManager implements IPluginManager, IServiceDefinition {
 	private CDIModuleFramework moduleFramework;
 	private List<IPlugin> plugins = new ArrayList<IPlugin>();
 	
