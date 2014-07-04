@@ -9,6 +9,6 @@ Import-Package: org.osgi.framework;version="1.7.0"
 Require-Bundle: cheshire.osgi,
  org.junit;bundle-version="4.11.0"
 Bundle-Activator: al.franzis.cheshire.test.osgi.activator.ModuleActivatorExample
-Service-Component: OSGI-INF/pluginA.xml,
- OSGI-INF/pluginManager.xml,
- OSGI-INF/pluginB.xml
+Service-Component: OSGI-INF/PluginA.xml,
+ OSGI-INF/PluginManager2.xml,
+ OSGI-INF/PluginC.xml

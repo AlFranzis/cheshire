@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="cheshire.test.osgi.service.PluginManager">
-   <implementation class="al.franzis.cheshire.test.osgi.service.PluginManager"/>
-   <service>
-      <provide interface="al.franzis.cheshire.test.osgi.service.IPluginManager"/>
-   </service>
-   <reference bind="addPlugin" cardinality="0..n" interface="al.franzis.cheshire.test.osgi.service.IPlugin" name="IPlugin" policy="static"/>
-</scr:component>
