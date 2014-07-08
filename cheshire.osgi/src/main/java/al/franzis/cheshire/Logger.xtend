@@ -7,6 +7,8 @@ import org.eclipse.xtend.lib.macro.file.MutableFileSystemSupport
 import org.eclipse.xtend.lib.macro.file.Path
 
 import static extension com.google.common.io.CharStreams.*
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 class Logger {
 	Path loggerFile
@@ -32,11 +34,12 @@ class Logger {
 	}
 	
 	def error(String msg, Throwable t) {
+		
 		val StringBuffer buf = new StringBuffer(readExistingFile())
 		buf.append("\n")
 		buf.append(msg)
 		buf.append("\n")
-		buf.append(t.message)
+		buf.append(stackTrace(t))
 		loggerFile.contents = buf.toString
 	}
 	
@@ -50,6 +53,16 @@ class Logger {
 	private def String read( InputStream in ) {
 		val lines = new InputStreamReader(in).readLines
 		lines.join("\n")
+	}
+	
+	private def String stackTrace(Throwable t) {
+		val ByteArrayOutputStream out = new ByteArrayOutputStream()
+		val PrintStream stream = new PrintStream(out)
+		t.printStackTrace(stream)
+		out.close
+		new String(out.toByteArray)
+			
+		
 	}
 	
 }

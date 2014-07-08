@@ -1,8 +1,10 @@
 package al.franzis.cheshire;
 
 import com.google.common.io.CharStreams;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.List;
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.CompilationUnit;
@@ -55,8 +57,8 @@ public class Logger {
     buf.append("\n");
     buf.append(msg);
     buf.append("\n");
-    String _message = t.getMessage();
-    buf.append(_message);
+    String _stackTrace = this.stackTrace(t);
+    buf.append(_stackTrace);
     String _string = buf.toString();
     this.cxt.setContents(
       this.loggerFile, _string);
@@ -85,6 +87,26 @@ public class Logger {
         final List<String> lines = CharStreams.readLines(_inputStreamReader);
         String _join = IterableExtensions.join(lines, "\n");
         _xblockexpression = (_join);
+      }
+      return _xblockexpression;
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  private String stackTrace(final Throwable t) {
+    try {
+      String _xblockexpression = null;
+      {
+        ByteArrayOutputStream _byteArrayOutputStream = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = _byteArrayOutputStream;
+        PrintStream _printStream = new PrintStream(out);
+        final PrintStream stream = _printStream;
+        t.printStackTrace(stream);
+        out.close();
+        byte[] _byteArray = out.toByteArray();
+        String _string = new String(_byteArray);
+        _xblockexpression = (_string);
       }
       return _xblockexpression;
     } catch (Throwable _e) {
