@@ -1,5 +1,6 @@
 package al.franzis.cheshire;
 
+import al.franzis.cheshire.Logger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,49 +16,105 @@ import org.eclipse.xtend.lib.macro.declaration.TypeReference;
 import org.eclipse.xtend.lib.macro.expression.Expression;
 import org.eclipse.xtend.lib.macro.file.Path;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
-import org.eclipse.xtext.xbase.lib.InputOutput;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
+import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
 public class ModuleProcessor extends AbstractClassProcessor {
+  private Logger logger;
+  
   public void doTransform(final MutableClassDeclaration annotatedClass, @Extension final TransformationContext context) {
-    InputOutput.<TransformationContext>println(context);
   }
   
   public void doGenerateCode(final List<? extends ClassDeclaration> annotatedSourceElements, @Extension final CodeGenerationContext context) {
-    for (final ClassDeclaration clazz : annotatedSourceElements) {
-      {
-        final Map<String,String> fieldMap = this.parse(clazz);
-        final String bundleName = fieldMap.remove("Bundle-Name");
-        CompilationUnit _compilationUnit = clazz.getCompilationUnit();
-        final Path filePath = _compilationUnit.getFilePath();
-        Path _targetFolder = context.getTargetFolder(filePath);
-        final Path file = _targetFolder.append("MANIFEST.MF");
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append("Manifest-Version: 1.0");
-        _builder.newLine();
-        _builder.append("Bundle-ManifestVersion: 2");
-        _builder.newLine();
-        _builder.append("Bundle-Name: ");
-        _builder.append(bundleName, "");
-        _builder.newLineIfNotEmpty();
-        _builder.append("Bundle-SymbolicName: ");
-        _builder.append(bundleName, "");
-        _builder.newLineIfNotEmpty();
+    try {
+      for (final ClassDeclaration clazz : annotatedSourceElements) {
         {
-          Set<Map.Entry<String,String>> _entrySet = fieldMap.entrySet();
-          for(final Map.Entry<String, String> entry : _entrySet) {
-            String _key = entry.getKey();
-            _builder.append(_key, "");
-            _builder.append(": ");
-            String _value = entry.getValue();
-            _builder.append(_value, "");
+          Logger _logger = Logger.getLogger(clazz, context);
+          this.logger = _logger;
+          try {
+            final Map<String,String> fieldMap = this.parse(clazz);
+            final String bundleName = fieldMap.remove("Bundle-Name");
+            String _remove = fieldMap.remove("Service-Component");
+            final String serviceDefs = this.processServiceDefinitions(_remove);
+            CompilationUnit _compilationUnit = clazz.getCompilationUnit();
+            final Path filePath = _compilationUnit.getFilePath();
+            Path _targetFolder = context.getTargetFolder(filePath);
+            final Path file = _targetFolder.append("MANIFEST.MF");
+            StringConcatenation _builder = new StringConcatenation();
+            _builder.append("Manifest-Version: 1.0");
+            _builder.newLine();
+            _builder.append("Bundle-ManifestVersion: 2");
+            _builder.newLine();
+            _builder.append("Bundle-Name: ");
+            _builder.append(bundleName, "");
             _builder.newLineIfNotEmpty();
+            _builder.append("Bundle-SymbolicName: ");
+            _builder.append(bundleName, "");
+            _builder.newLineIfNotEmpty();
+            _builder.append("Service-Component: ");
+            _builder.append(serviceDefs, "");
+            _builder.newLineIfNotEmpty();
+            {
+              Set<Map.Entry<String,String>> _entrySet = fieldMap.entrySet();
+              for(final Map.Entry<String, String> entry : _entrySet) {
+                String _key = entry.getKey();
+                _builder.append(_key, "");
+                _builder.append(": ");
+                String _value = entry.getValue();
+                _builder.append(_value, "");
+                _builder.newLineIfNotEmpty();
+              }
+            }
+            context.setContents(file, _builder);
+          } catch (final Throwable _t) {
+            if (_t instanceof Throwable) {
+              final Throwable t = (Throwable)_t;
+              this.logger.error("Error while processing Module Manifest", t);
+              throw t;
+            } else {
+              throw Exceptions.sneakyThrow(_t);
+            }
           }
         }
-        context.setContents(file, _builder);
       }
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
+  }
+  
+  private String processServiceDefinitions(final String serviceDefinitions) {
+    String _xblockexpression = null;
+    {
+      String _replaceAll = serviceDefinitions.replaceAll("\\s", "");
+      String[] sdefs = _replaceAll.split(",");
+      final String[] _converted_sdefs = (String[])sdefs;
+      final Function1<String,String> _function = new Function1<String,String>() {
+        public String apply(final String s) {
+          String _xblockexpression = null;
+          {
+            final int idx = s.lastIndexOf(".");
+            String unq = s;
+            if ((idx != (-1))) {
+              int _length = s.length();
+              String _substring = s.substring((idx + 1), _length);
+              unq = _substring;
+            }
+            String _unq = unq = (("OSGI-INF/" + unq) + ".xml");
+            _xblockexpression = (_unq);
+          }
+          return _xblockexpression;
+        }
+      };
+      final List<String> ss = ListExtensions.<String, String>map(((List<String>)Conversions.doWrapArray(_converted_sdefs)), _function);
+      this.logger.info(("ServiceDefinitions: " + ss));
+      String _flatten = this.flatten(((String[])Conversions.unwrapArray(ss, String.class)));
+      _xblockexpression = (_flatten);
+    }
+    return _xblockexpression;
   }
   
   private Map<String,String> parse(final ClassDeclaration annotatedClass) {
@@ -86,24 +143,8 @@ public class ModuleProcessor extends AbstractClassProcessor {
             String _replace_2 = _replace_1.replace("]", "");
             fieldValue = _replace_2;
             final String[] multiValues = fieldValue.split(",");
-            StringBuffer _stringBuffer = new StringBuffer();
-            final StringBuffer buf = _stringBuffer;
-            boolean first = true;
-            for (final String sv : multiValues) {
-              {
-                final String trimmed = sv.trim();
-                int _length_1 = trimmed.length();
-                int _minus_1 = (_length_1 - 1);
-                final String s = trimmed.substring(1, _minus_1);
-                if ((!first)) {
-                  buf.append(",\n ");
-                }
-                buf.append(s);
-                first = false;
-              }
-            }
-            String _string = buf.toString();
-            value = _string;
+            String _flatten = this.flatten(multiValues);
+            value = _flatten;
           } else {
             value = fieldValue;
           }
@@ -111,6 +152,42 @@ public class ModuleProcessor extends AbstractClassProcessor {
         }
       }
       _xblockexpression = (keyValueMap);
+    }
+    return _xblockexpression;
+  }
+  
+  private String flatten(final String[] ss) {
+    String _xblockexpression = null;
+    {
+      StringBuffer _stringBuffer = new StringBuffer();
+      final StringBuffer buf = _stringBuffer;
+      boolean first = true;
+      for (final String s : ss) {
+        {
+          String _s = s.trim();
+          boolean _and = false;
+          boolean _startsWith = _s.startsWith("\"");
+          if (!_startsWith) {
+            _and = false;
+          } else {
+            boolean _endsWith = _s.endsWith("\"");
+            _and = (_startsWith && _endsWith);
+          }
+          if (_and) {
+            int _length = _s.length();
+            int _minus = (_length - 1);
+            String _substring = _s.substring(1, _minus);
+            _s = _substring;
+          }
+          if ((!first)) {
+            buf.append(",\n ");
+          }
+          buf.append(_s);
+          first = false;
+        }
+      }
+      String _string = buf.toString();
+      _xblockexpression = (_string);
     }
     return _xblockexpression;
   }

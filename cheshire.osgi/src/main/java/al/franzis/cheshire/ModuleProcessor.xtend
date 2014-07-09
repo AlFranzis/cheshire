@@ -13,6 +13,7 @@ import java.lang.annotation.ElementType
 import java.util.List
 import java.util.HashMap
 import java.util.Map
+import java.util.Arrays
 
 @Active(ModuleProcessor)
 @Target(ElementType.TYPE)
@@ -21,16 +22,18 @@ annotation Module {
 }
 
 class ModuleProcessor extends AbstractClassProcessor {
+	Logger logger
 
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-		println(context)
 	}
 
-	override doGenerateCode(List<? extends ClassDeclaration> annotatedSourceElements,
-		extension CodeGenerationContext context) {
-			for (clazz : annotatedSourceElements) {
-				val Map<String,String> fieldMap = parse(clazz)
+	override doGenerateCode(List<? extends ClassDeclaration> annotatedSourceElements,extension CodeGenerationContext context) {
+		for (clazz : annotatedSourceElements) {
+			logger = Logger.getLogger(clazz, context)
+			try {
+				val Map<String, String> fieldMap = parse(clazz)
 				val bundleName = fieldMap.remove("Bundle-Name")
+				val serviceDefs = processServiceDefinitions(fieldMap.remove("Service-Component"))
 				
 				val filePath = clazz.compilationUnit.filePath
 				val file = filePath.targetFolder.append("MANIFEST.MF")
@@ -39,11 +42,33 @@ class ModuleProcessor extends AbstractClassProcessor {
 					Bundle-ManifestVersion: 2
 					Bundle-Name: «bundleName»
 					Bundle-SymbolicName: «bundleName»
+					Service-Component: «serviceDefs»
 					«FOR entry : fieldMap.entrySet»
 						«entry.key»: «entry.value»
 					«ENDFOR»
-					'''
+				'''
+			} catch (Throwable t) {
+				logger.error("Error while processing Module Manifest", t )
+				throw t
 			}
+		}
+
+	}
+	
+	private def String processServiceDefinitions( String serviceDefinitions ) {
+		var sdefs = serviceDefinitions.replaceAll("\\s", "").split(",")
+		
+		val ss = sdefs.map([s | 
+			val idx = s.lastIndexOf(".")
+			var unq = s
+			if ( idx != -1 )
+				unq = s.substring(idx + 1, s.length)
+			
+			unq = "OSGI-INF/" + unq + ".xml"
+		])
+		
+		logger.info("ServiceDefinitions: " + ss)
+		flatten(ss)
 	}
 	
 	private def Map<String,String> parse(ClassDeclaration annotatedClass) {
@@ -58,19 +83,7 @@ class ModuleProcessor extends AbstractClassProcessor {
 			if ( field.type.array) {
 				fieldValue = fieldValue.replace("[", "").replace("]","")
 				val String[] multiValues = fieldValue.split(",")
-				val buf = new StringBuffer();
-				var boolean first = true;
-				for(String sv : multiValues) {
-					val trimmed = sv.trim
-					val s = trimmed.substring(1, trimmed.length-1)
-					if ( !first) {
-						buf.append(",\n ")
-					}
-					buf.append(s)
-					
-					first = false
-				}
-				value = buf.toString
+				value = flatten(multiValues)
 			}
 			else {
 				value = fieldValue
@@ -80,4 +93,22 @@ class ModuleProcessor extends AbstractClassProcessor {
 		}
 		keyValueMap
 	}
+	
+	private def String flatten(String[] ss) {
+		val buf = new StringBuffer();
+		var boolean first = true;
+		for (String s : ss) {
+			var _s = s.trim
+			if (_s.startsWith("\"") && _s.endsWith("\""))
+				_s = _s.substring(1, _s.length - 1)
+			if (!first) {
+				buf.append(",\n ")
+			}
+			buf.append(_s)
+
+			first = false
+		}
+		buf.toString
+	}
+	
 }
