@@ -21,28 +21,8 @@ annotation Module {
 class ModuleProcessor extends AbstractClassProcessor {
 
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-		println(context)
 	}
 
-	override doGenerateCode(List<? extends ClassDeclaration> annotatedSourceElements,
-		extension CodeGenerationContext context) {
-			for (clazz : annotatedSourceElements) {
-				val filePath = clazz.compilationUnit.filePath
-				
-//				for ( fieldDec : clazz.declaredFields ) {
-//					val fieldName = fieldDec.simpleName
-//					val v = fieldDec.initializer
-//					val field = clazz.class.getDeclaredField( fieldName )
-//					val value = field.get( clazz.class )
-//					println("Value: " + value)
-//				}
-				
-				val file = filePath.targetFolder.append(clazz.qualifiedName.replace('.', '/') + ".properties")
-				file.contents = '''
-					«FOR field : clazz.declaredFields»
-						«field.simpleName» : «field.initializer.toString»
-					«ENDFOR»
-					'''
-			}
+	override doGenerateCode(List<? extends ClassDeclaration> annotatedSourceElements, extension CodeGenerationContext context) {
 	}
 }
