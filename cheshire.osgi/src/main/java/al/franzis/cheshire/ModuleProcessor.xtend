@@ -1,19 +1,18 @@
 package al.franzis.cheshire
 
-import org.eclipse.xtend.lib.macro.Active
-import java.lang.annotation.Target
+import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
+import java.lang.annotation.Target
+import java.util.HashMap
+import java.util.List
+import java.util.Map
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor
-import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
+import org.eclipse.xtend.lib.macro.Active
+import org.eclipse.xtend.lib.macro.CodeGenerationContext
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
-import org.eclipse.xtend.lib.macro.CodeGenerationContext
-import java.lang.annotation.ElementType
-import java.util.List
-import java.util.HashMap
-import java.util.Map
-import java.util.Arrays
+import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 
 @Active(ModuleProcessor)
 @Target(ElementType.TYPE)
@@ -36,7 +35,9 @@ class ModuleProcessor extends AbstractClassProcessor {
 				val serviceDefs = processServiceDefinitions(fieldMap.remove("Service-Component"))
 				
 				val filePath = clazz.compilationUnit.filePath
-				val file = filePath.targetFolder.append("MANIFEST.MF")
+				val projectPath = context.getProjectFolder(filePath)
+				val metaInfPath = projectPath.append("META-INF")
+				val file = metaInfPath.append("MANIFEST.MF")
 				file.contents = '''
 					Manifest-Version: 1.0
 					Bundle-ManifestVersion: 2
@@ -67,7 +68,6 @@ class ModuleProcessor extends AbstractClassProcessor {
 			unq = "OSGI-INF/" + unq + ".xml"
 		])
 		
-		logger.info("ServiceDefinitions: " + ss)
 		flatten(ss)
 	}
 	

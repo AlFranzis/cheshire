@@ -42,8 +42,9 @@ public class ModuleProcessor extends AbstractClassProcessor {
             final String serviceDefs = this.processServiceDefinitions(_remove);
             CompilationUnit _compilationUnit = clazz.getCompilationUnit();
             final Path filePath = _compilationUnit.getFilePath();
-            Path _targetFolder = context.getTargetFolder(filePath);
-            final Path file = _targetFolder.append("MANIFEST.MF");
+            final Path projectPath = context.getProjectFolder(filePath);
+            final Path metaInfPath = projectPath.append("META-INF");
+            final Path file = metaInfPath.append("MANIFEST.MF");
             StringConcatenation _builder = new StringConcatenation();
             _builder.append("Manifest-Version: 1.0");
             _builder.newLine();
@@ -110,7 +111,6 @@ public class ModuleProcessor extends AbstractClassProcessor {
         }
       };
       final List<String> ss = ListExtensions.<String, String>map(((List<String>)Conversions.doWrapArray(_converted_sdefs)), _function);
-      this.logger.info(("ServiceDefinitions: " + ss));
       String _flatten = this.flatten(((String[])Conversions.unwrapArray(ss, String.class)));
       _xblockexpression = (_flatten);
     }

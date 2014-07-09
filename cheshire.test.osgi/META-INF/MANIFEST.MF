@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: cheshire.test.osgi
 Bundle-SymbolicName: cheshire.test.osgi
+Service-Component: OSGI-INF/PluginA.xml,
+ OSGI-INF/PluginManager2.xml,
+ OSGI-INF/PluginC.xml
 Bundle-Version: 0.0.1.qualifier
-Bundle-Vendor: Al Franzis
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Al Franzis
 Import-Package: org.osgi.framework;version="1.7.0"
 Require-Bundle: cheshire.osgi,
  org.junit;bundle-version="4.11.0"
 Bundle-Activator: al.franzis.cheshire.test.osgi.activator.ModuleActivatorExample
-Service-Component: OSGI-INF/PluginA.xml,
- OSGI-INF/PluginManager2.xml,
- OSGI-INF/PluginC.xml
