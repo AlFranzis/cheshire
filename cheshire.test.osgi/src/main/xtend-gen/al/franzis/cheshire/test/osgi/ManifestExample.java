@@ -19,5 +19,5 @@ public class ManifestExample {
   
   public final static String Bundle_Activator = "al.franzis.cheshire.test.osgi.activator.ModuleActivatorExample";
   
-  public final static String[] Service_Component = { "OSGI-INF/PluginA.xml", "OSGI-INF/PluginManager2.xml", "OSGI-INF/PluginC.xml" };
+  public final static String[] Service_Component = { "al.franzis.cheshire.test.osgi.service.PluginA", "al.franzis.cheshire.test.osgi.service.PluginManager2", "al.franzis.cheshire.test.osgi.service.PluginC" };
 }

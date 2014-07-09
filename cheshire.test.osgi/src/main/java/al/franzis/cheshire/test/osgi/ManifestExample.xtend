@@ -12,7 +12,7 @@ class ManifestExample {
 	public static val String[] Require_Bundle = #["cheshire.osgi",
  		"org.junit;bundle-version=\"4.11.0\""]
 	public static val String Bundle_Activator = "al.franzis.cheshire.test.osgi.activator.ModuleActivatorExample"
-	public static val String[] Service_Component = #["OSGI-INF/PluginA.xml",
- 		"OSGI-INF/PluginManager2.xml",
- 		"OSGI-INF/PluginC.xml"]
+	public static val String[] Service_Component = #["al.franzis.cheshire.test.osgi.service.PluginA",
+ 		"al.franzis.cheshire.test.osgi.service.PluginManager2",
+ 		"al.franzis.cheshire.test.osgi.service.PluginC"]
 }
