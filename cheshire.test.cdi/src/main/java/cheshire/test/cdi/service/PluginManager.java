@@ -21,7 +21,7 @@ import al.franzis.cheshire.service.ServiceBindMethod;
 		referencedServices={"cheshire.test.cdi.service.IPlugin"},
 		properties={"Prop1", "Value1", "Prop2", "Value2"}
 	)
-public class PluginManager implements IPluginManager, IServiceDefinition {
+public class PluginManager implements IPluginManager { //, IServiceDefinition {
 	private CDIModuleFramework moduleFramework;
 	private List<IPlugin> plugins = new ArrayList<IPlugin>();
 	
