@@ -1,6 +1,8 @@
 package al.franzis.cheshire.test.osgi.service
 
 import al.franzis.cheshire.service.Service
+import al.franzis.cheshire.service.ServiceActivationMethod
+import al.franzis.cheshire.service.IServiceContext
 
 @Service(
 	name="PluginC",
@@ -12,6 +14,12 @@ class PluginC implements IPlugin {
 	
 	def PluginC() {
 		println("PluginC created");
+	}
+	
+	@ServiceActivationMethod
+	def void activate(IServiceContext serviceContext) {
+		System.out.println("PluginC.activate() called" );
+		System.out.println("PluginC service properties: " + serviceContext.getProperties());
 	}
 	
 	override def void foo() {

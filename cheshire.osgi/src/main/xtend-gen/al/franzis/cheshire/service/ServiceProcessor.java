@@ -9,15 +9,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor;
 import org.eclipse.xtend.lib.macro.CodeGenerationContext;
 import org.eclipse.xtend.lib.macro.TransformationContext;
 import org.eclipse.xtend.lib.macro.declaration.AnnotationReference;
 import org.eclipse.xtend.lib.macro.declaration.AnnotationTypeDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration;
+import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy;
 import org.eclipse.xtend.lib.macro.declaration.CompilationUnit;
 import org.eclipse.xtend.lib.macro.declaration.MethodDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration;
+import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.ParameterDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.TypeReference;
 import org.eclipse.xtend.lib.macro.file.Path;
@@ -28,10 +31,29 @@ import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
 public class ServiceProcessor extends AbstractClassProcessor {
   public void doTransform(final MutableClassDeclaration annotatedClass, @Extension final TransformationContext context) {
+    final TypeReference componentContextType = context.newTypeReference("org.osgi.service.component.ComponentContext");
+    final Procedure1<MutableMethodDeclaration> _function = new Procedure1<MutableMethodDeclaration>() {
+      public void apply(final MutableMethodDeclaration it) {
+        it.addParameter("componentContext", componentContextType);
+        final CompilationStrategy _function = new CompilationStrategy() {
+          public CharSequence compile(final CompilationStrategy.CompilationContext it) {
+            StringConcatenation _builder = new StringConcatenation();
+            _builder.append("al.franzis.cheshire.osgi.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.OSGiServiceContext(componentContext);");
+            _builder.newLine();
+            _builder.append("activate(osgiComponentContext);");
+            _builder.newLine();
+            return _builder;
+          }
+        };
+        it.setBody(_function);
+      }
+    };
+    annotatedClass.addMethod("activate", _function);
   }
   
   public void doGenerateCode(final List<? extends ClassDeclaration> annotatedSourceElements, @Extension final CodeGenerationContext context) {
@@ -88,6 +110,20 @@ public class ServiceProcessor extends AbstractClassProcessor {
             String _name_1 = refService.getName();
             _builder.append(_name_1, "   \t\t\t\t");
             _builder.append("\" name=\"IPlugin\" policy=\"static\"/>");
+            _builder.newLineIfNotEmpty();
+          }
+        }
+        {
+          Map<String,String> _properties = serviceInfo.getProperties();
+          Set<Map.Entry<String,String>> _entrySet = _properties.entrySet();
+          for(final Map.Entry<String, String> prop : _entrySet) {
+            _builder.append("<property name=\"");
+            String _key = prop.getKey();
+            _builder.append(_key, "");
+            _builder.append("\" type=\"String\" value=\"");
+            String _value = prop.getValue();
+            _builder.append(_value, "");
+            _builder.append("\"/>\t\t\t\t\t");
             _builder.newLineIfNotEmpty();
           }
         }

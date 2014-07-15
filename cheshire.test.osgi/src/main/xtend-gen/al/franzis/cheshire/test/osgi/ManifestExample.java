@@ -13,7 +13,7 @@ public class ManifestExample {
   
   public final static String Bundle_ActivationPolicy = "lazy";
   
-  public final static String[] Import_Package = { "org.osgi.framework;version=\"1.7.0\"" };
+  public final static String[] Import_Package = { "org.osgi.framework;version=\"1.7.0\"", "org.osgi.service.component;version=\"1.1.0\"" };
   
   public final static String[] Require_Bundle = { "cheshire.osgi", "org.junit;bundle-version=\"4.11.0\"" };
   

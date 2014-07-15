@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
+import org.osgi.service.component.ComponentContext;
 
 @Service(name = "PluginManager2", providedServices = { "al.franzis.cheshire.test.osgi.service.IPluginManager" }, referencedServices = { "al.franzis.cheshire.test.osgi.service.IPlugin" }, properties = { "Prop1", "Value1", "Prop2", "Value2" })
 @SuppressWarnings("all")
@@ -40,5 +41,10 @@ public class PluginManager2 implements IPluginManager {
   @ServiceBindMethod
   public void addPlugin(final IPlugin plugin) {
     this.plugins.add(plugin);
+  }
+  
+  public void activate(final ComponentContext componentContext) {
+    al.franzis.cheshire.osgi.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.OSGiServiceContext(componentContext);
+    activate(osgiComponentContext);
   }
 }

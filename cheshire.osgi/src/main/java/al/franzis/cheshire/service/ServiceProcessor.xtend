@@ -43,6 +43,15 @@ annotation Service {
 class ServiceProcessor extends AbstractClassProcessor {
 	
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
+		val componentContextType = context.newTypeReference("org.osgi.service.component.ComponentContext")
+	
+		annotatedClass.addMethod("activate") [
+      		addParameter( "componentContext", componentContextType )
+      		body = ['''
+      		al.franzis.cheshire.osgi.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.OSGiServiceContext(componentContext);
+      		activate(osgiComponentContext);
+      		''']
+      	]
 	}
 
 	override doGenerateCode(List<? extends ClassDeclaration> annotatedSourceElements, extension CodeGenerationContext context) {
@@ -67,6 +76,9 @@ class ServiceProcessor extends AbstractClassProcessor {
    				
    				«FOR refService : serviceInfo.referencedServices»
    					<reference bind="«refService.bindMethodName»" cardinality="0..n" interface="«refService.name»" name="IPlugin" policy="static"/>
+				«ENDFOR»
+				«FOR prop : serviceInfo.properties.entrySet»
+				  <property name="«prop.key»" type="String" value="«prop.value»"/>					
 				«ENDFOR»
 				</scr:component>
 			'''
