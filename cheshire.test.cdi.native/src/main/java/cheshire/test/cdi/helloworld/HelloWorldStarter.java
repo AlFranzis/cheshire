@@ -4,6 +4,7 @@ import org.jboss.weld.environment.se.StartMain;
 
 import al.franzis.cheshire.IModuleContext;
 import cheshire.test.cdi.activator.ModuleActivatorExample;
+import cheshire.test.cdi.nat.JNIHelloWorld;
 
 public class HelloWorldStarter {
 	
@@ -14,8 +15,8 @@ public class HelloWorldStarter {
 	
 
 	private static void usePluginService() {
-		IModuleContext moduleContext = ModuleActivatorExample.getModuleContext();
-		
+		JNIHelloWorld hw = new JNIHelloWorld();
+		hw.sayHello();
 		
 	}
 	

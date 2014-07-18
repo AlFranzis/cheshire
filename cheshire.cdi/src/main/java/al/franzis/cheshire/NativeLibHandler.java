@@ -2,12 +2,16 @@ package al.franzis.cheshire;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import al.franzis.cheshire.cdi.DefaultEnvironmentMatcher;
+import al.franzis.cheshire.cdi.DefaultLibPathProvider;
 
 /**
  * Processor of native library clauses in OSGi style:
@@ -20,22 +24,19 @@ import java.util.Set;
  */
 public class NativeLibHandler {
 	private IEnvironmentMatcher envMatcher;
+	private ILibPathProvider libPathProvider;
 	private List<LibInfo> libs = new LinkedList<>();
 	
 	public NativeLibHandler(String nativeLibClauses) {
-		this.envMatcher = new IEnvironmentMatcher() {
-			
-			@Override
-			public boolean matchesEnvironment(Map<String, List<String>> targetProperties) {
-				return true;
-			}
-		};
+		this.envMatcher = new DefaultEnvironmentMatcher();
+		this.libPathProvider = new DefaultLibPathProvider();
 		
 		parseLibClauses(nativeLibClauses);
 	}
 	
-	public NativeLibHandler(IEnvironmentMatcher envMatcher, String nativeLibClauses) {
+	public NativeLibHandler(IEnvironmentMatcher envMatcher, ILibPathProvider libPathProvider, String nativeLibClauses) {
 		this.envMatcher = envMatcher;
+		this.libPathProvider = libPathProvider;
 		parseLibClauses(nativeLibClauses);
 	}
 	
@@ -43,7 +44,7 @@ public class NativeLibHandler {
 		Set<File> libDirs = new HashSet<>();
 		for (LibInfo lib : libs) {
 			if (envMatcher.matchesEnvironment(lib.getProperties())) {
-				for(String libPath : lib.getLibs().values()) {
+				for(String libPath : lib.getLibs()) {
 					File effectiveLibPath = getEffectivePath(libPath);
 					File libDir = effectiveLibPath.getParentFile();
 					libDirs.add(libDir);
@@ -64,7 +65,7 @@ public class NativeLibHandler {
 	}
 	
 	private File getEffectivePath(String libPath) {
-		return new File(libPath);
+		return libPathProvider.getEffectivePath(libPath);
 	}
 	
 	public static void augmentJavaLibraryPath( String libPath ) {
@@ -97,8 +98,7 @@ public class NativeLibHandler {
 					String[] p = parseProperty(clausePart);
 					info.addProperty(p[0], p[1]);
 				} else {
-					String[] l = parseLib(clausePart);
-					info.addLib(l[0],l[1]);
+					info.addLib(clausePart);
 				}
 			}
 			libs.add(info);
@@ -113,13 +113,8 @@ public class NativeLibHandler {
 		return propertyAtom.split("=");
 	}
 	
-	private String[] parseLib(String libAtom) {
-		String libName = libAtom.substring(libAtom.lastIndexOf("/") + 1);
-		return new String[] { libName, libAtom };
-	}
-	
 	public static class LibInfo {
-		private Map<String,String> libs = new HashMap<>();
+		private List<String> libs = new ArrayList<>();
 		private Map<String,List<String>> properties = new HashMap<>();
 		
 		private void addProperty(String propName, String propValue) {
@@ -131,15 +126,15 @@ public class NativeLibHandler {
 			propValues.add(propValue);
 		}
 
-		private void addLib(String libName, String libPath) {
-			libs.put(libName, libPath);
+		private void addLib(String libPath) {
+			libs.add(libPath);
 		}
 		
 		private Map<String,List<String>> getProperties() {
 			return properties;
 		}
 		
-		private Map<String,String> getLibs() {
+		private List<String> getLibs() {
 			return libs;
 		}
 	}

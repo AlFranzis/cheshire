@@ -50,10 +50,15 @@ public class CDIModuleFramework {
 	
 	public void start(@Observes ContainerInitialized event) {
 		System.out.println("Starting module framework");
-		Set<Bean<?>> beans = beanManager.getBeans(ICDIModuleActivator.class);
-		for ( Bean<?> bean : beans ) {
+		Set<Bean<?>> manifestBeans = beanManager.getBeans(ICDIModuleManifest.class);
+		for(Bean<?> manifestBean : manifestBeans) {
+			createBeanInstance(manifestBean);
+		}
+		
+		Set<Bean<?>> activatorBeans = beanManager.getBeans(ICDIModuleActivator.class);
+		for (Bean<?> activatorBean : activatorBeans) {
 			// 1) create activator
-			Object activator = createActivator(bean);
+			Object activator = createBeanInstance(activatorBean);
 			// 2) inject module context
 			IModuleContext moduleContext = getModuleContext(activator);
 			injectModuleContext(activator, moduleContext);
@@ -67,10 +72,10 @@ public class CDIModuleFramework {
 		serviceFactory.registerService(serviceInstance);
 	}
 	
-	private Object createActivator( Bean<?> bean ) {
+	private Object createBeanInstance( Bean<?> bean ) {
 		CreationalContext ctx = beanManager.createCreationalContext(null);
-		Object activatorInstance = bean.create(ctx);
-		return activatorInstance;
+		Object beanInstance = bean.create(ctx);
+		return beanInstance;
 	}
 	
 	private void startActivator( Object activator ) {

@@ -20,13 +20,9 @@ annotation Module {
 class ModuleProcessor extends AbstractClassProcessor {
 
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-//		val injectAnnotationType = context.findTypeGlobally("javax.inject.Inject")
-//		annotatedClass.addAnnotation(injectAnnotationType)
-		
-      	
-//      	annotatedClass.addField("nativeLibs") [
-//    		type = context.newTypeReference("java.lang.String")
-//      	]
+		val moduleManifestType = context.newTypeReference("al.franzis.cheshire.cdi.ICDIModuleManifest")
+		val implInterfaces = annotatedClass.implementedInterfaces + #[ moduleManifestType ]
+		annotatedClass.setImplementedInterfaces(implInterfaces)
       	
       	val nativeClauses = parseNativeClauses(annotatedClass)
 		val libHandler = new NativeLibHandler(nativeClauses);

@@ -1,6 +1,9 @@
 package al.franzis.cheshire;
 
 import al.franzis.cheshire.NativeLibHandler;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import java.util.Collections;
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor;
 import org.eclipse.xtend.lib.macro.CodeGenerationContext;
 import org.eclipse.xtend.lib.macro.TransformationContext;
@@ -10,6 +13,7 @@ import org.eclipse.xtend.lib.macro.declaration.FieldDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.Type;
+import org.eclipse.xtend.lib.macro.declaration.TypeReference;
 import org.eclipse.xtend.lib.macro.expression.Expression;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Exceptions;
@@ -20,6 +24,10 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 public class ModuleProcessor extends AbstractClassProcessor {
   public void doTransform(final MutableClassDeclaration annotatedClass, @Extension final TransformationContext context) {
     try {
+      final TypeReference moduleManifestType = context.newTypeReference("al.franzis.cheshire.cdi.ICDIModuleManifest");
+      Iterable<? extends TypeReference> _implementedInterfaces = annotatedClass.getImplementedInterfaces();
+      final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(Lists.<TypeReference>newArrayList(moduleManifestType)));
+      annotatedClass.setImplementedInterfaces(implInterfaces);
       final String nativeClauses = this.parseNativeClauses(annotatedClass);
       NativeLibHandler _nativeLibHandler = new NativeLibHandler(nativeClauses);
       final NativeLibHandler libHandler = _nativeLibHandler;
