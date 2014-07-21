@@ -14,8 +14,7 @@ Bundle-ClassPath: lib/aopalliance-1.0.jar,
  lib/org.eclipse.xtend.lib-2.5.0.jar,
  lib/org.eclipse.xtend.standalone-2.4.3.jar,
  lib/org.eclipse.xtext.xbase.lib-2.5.0.jar
-Import-Package: org.junit;version="4.10.0",
- org.osgi.framework;version="1.7.0",
+Import-Package: org.osgi.framework;version="1.7.0",
  org.osgi.service.component;version="1.1.0"
 Export-Package: al.franzis.cheshire,
  al.franzis.cheshire.osgi,
