@@ -15,11 +15,14 @@ import org.eclipse.xtext.xbase.lib.InputOutput;
 public class ModuleActivatorExample implements ICDIModuleActivator {
   private static IModuleContext moduleContext;
   
+  public static URL loadedResource;
+  
   @ModuleStartMethod
   public void start() {
     IModule _module = ModuleActivatorExample.moduleContext.getModule();
     final URL resourceUrl = _module.getResource("/resource.xml");
     InputOutput.<URL>println(resourceUrl);
+    ModuleActivatorExample.loadedResource = resourceUrl;
   }
   
   @ModuleStopMethod

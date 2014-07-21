@@ -10,13 +10,14 @@ import al.franzis.cheshire.ModuleContextMethod
 @ModuleActivator
 class ModuleActivatorExample {
 	private static IModuleContext moduleContext
+	public static URL loadedResource;
 	
 	@ModuleStartMethod
 	def void start() {
 		val URL resourceUrl = moduleContext.getModule().getResource( "/resource.xml" )
-		
 		// do some individual magic
 		println( resourceUrl )
+		loadedResource = resourceUrl
 	}
 	
 	@ModuleStopMethod
