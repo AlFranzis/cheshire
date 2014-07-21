@@ -86,6 +86,10 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
+          <testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>

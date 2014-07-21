@@ -10,12 +10,12 @@ import java.net.URL
 @ModuleActivator
 class ModuleActivatorExample {
 	private static IModuleContext moduleContext
+	public static URL loadedResource;
 	
 	@ModuleStartMethod
 	def void start() {
 		val URL resourceUrl = ModuleActivatorExample.moduleContext.getModule().getResource( "someResource" )
-		// do some individual magic
-		println( "Resource URL: " + resourceUrl )
+		loadedResource = resourceUrl
 	}
 	
 	@ModuleStopMethod

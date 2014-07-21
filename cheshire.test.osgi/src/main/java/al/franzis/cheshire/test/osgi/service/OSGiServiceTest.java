@@ -19,5 +19,8 @@ public class OSGiServiceTest {
 		List<IPlugin> plugins = pluginManager.getPlugins();
 		System.out.println("Plugins known to PluginManager: " + plugins);
 		Assert.assertEquals(2, plugins.size());
+		
+		// check that module activator was 1. started and 2. resource was loaded correctly
+		Assert.assertNotNull(ModuleActivatorExample.loadedResource); 
 	}
 }

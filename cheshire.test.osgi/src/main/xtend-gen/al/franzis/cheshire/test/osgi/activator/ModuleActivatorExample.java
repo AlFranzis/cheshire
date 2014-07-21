@@ -7,7 +7,6 @@ import al.franzis.cheshire.ModuleContextMethod;
 import al.franzis.cheshire.ModuleStartMethod;
 import al.franzis.cheshire.ModuleStopMethod;
 import java.net.URL;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -16,11 +15,13 @@ import org.osgi.framework.BundleContext;
 public class ModuleActivatorExample implements BundleActivator {
   private static IModuleContext moduleContext;
   
+  public static URL loadedResource;
+  
   @ModuleStartMethod
   public void start() {
     IModule _module = ModuleActivatorExample.moduleContext.getModule();
     final URL resourceUrl = _module.getResource("someResource");
-    InputOutput.<String>println(("Resource URL: " + resourceUrl));
+    ModuleActivatorExample.loadedResource = resourceUrl;
   }
   
   @ModuleStopMethod
