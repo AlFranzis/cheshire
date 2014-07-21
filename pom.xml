@@ -13,5 +13,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>cheshire.test.osgi</module>
     <module>cheshire.cdi</module>
     <module>cheshire.test.cdi</module>
+	<module>cheshire.test.cdi.native</module>
   </modules>
 </project>

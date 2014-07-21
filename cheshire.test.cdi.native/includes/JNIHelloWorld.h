@@ -10,9 +10,9 @@ extern "C" {
 /*
  * Class:     cheshire_test_cdi_nat_JNIHelloWorld
  * Method:    sayHello
- * Signature: ()V
+ * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT void JNICALL Java_cheshire_test_cdi_nat_JNIHelloWorld_sayHello
+JNIEXPORT jstring JNICALL Java_cheshire_test_cdi_nat_JNIHelloWorld_sayHello
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus
