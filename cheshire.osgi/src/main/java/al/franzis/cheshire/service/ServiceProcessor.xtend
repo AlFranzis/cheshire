@@ -14,6 +14,9 @@ import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MethodDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
+import org.eclipse.xtend.lib.macro.file.FileLocations
+import org.eclipse.xtend.lib.macro.file.FileSystemSupport
+import org.eclipse.xtend.lib.macro.file.MutableFileSystemSupport
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -52,39 +55,48 @@ class ServiceProcessor extends AbstractClassProcessor {
       		activate(osgiComponentContext);
       		''']
       	]
+      	
+      	if(!PathHelper.eclipseEnvironment)
+      		createOSGiServiceFile(context, null, context, annotatedClass)
 	}
 
-	override doGenerateCode(List<? extends ClassDeclaration> annotatedSourceElements, extension CodeGenerationContext context) {
-		for (clazz : annotatedSourceElements) {
-			val filePath = clazz.compilationUnit.filePath
-			
-			val projectPath = context.getProjectFolder(filePath)
-			val osgiInfPath = projectPath.append("OSGI-INF");
-			context.mkdir( osgiInfPath )
-			val file = osgiInfPath.append(clazz.simpleName + ".xml")
-			
-			val serviceInfo = parseServiceDefinition(clazz,Service)
-			file.contents = '''
-				<?xml version="1.0" encoding="UTF-8"?>
-				<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="«serviceInfo.name»">
-   				<implementation class="«clazz.qualifiedName»"/>
-   				<service>
-   					«FOR providedService : serviceInfo.providedServices»
-      					<provide interface="«providedService»"/>
-      				«ENDFOR»
-   				</service>
-   				
-   				«FOR refService : serviceInfo.referencedServices»
-   					<reference bind="«refService.bindMethodName»" cardinality="0..n" interface="«refService.name»" name="IPlugin" policy="static"/>
-				«ENDFOR»
-				«FOR prop : serviceInfo.properties.entrySet»
-				  <property name="«prop.key»" type="String" value="«prop.value»"/>					
-				«ENDFOR»
-				</scr:component>
-			'''
-			
-		}
+	override doGenerateCode(ClassDeclaration annotatedClass, extension CodeGenerationContext context) {
+		if(PathHelper.eclipseEnvironment)
+			createOSGiServiceFile(context, context, context, annotatedClass)
 	}
+	
+	private def void createOSGiServiceFile(FileLocations fl, extension MutableFileSystemSupport mfss, extension FileSystemSupport fs,
+		ClassDeclaration serviceClass) {
+		val filePath = serviceClass.compilationUnit.filePath
+
+		val projectPath = fl.getProjectFolder(filePath)
+		val osgiInfPath = projectPath.append("OSGI-INF");
+
+		val file = osgiInfPath.append(serviceClass.simpleName + ".xml")
+
+		val serviceInfo = parseServiceDefinition(serviceClass, Service)
+		PathHelper.getInstance().setContents(mfss, osgiInfPath, file,
+		'''
+			<?xml version="1.0" encoding="UTF-8"?>
+			<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="«serviceInfo.name»">
+						<implementation class="«serviceClass.qualifiedName»"/>
+						<service>
+							«FOR providedService : serviceInfo.providedServices»
+								<provide interface="«providedService»"/>
+							«ENDFOR»
+						</service>
+						
+						«FOR refService : serviceInfo.referencedServices»
+							<reference bind="«refService.bindMethodName»" cardinality="0..n" interface="«refService.name»" name="IPlugin" policy="static"/>
+			«ENDFOR»
+			«FOR prop : serviceInfo.properties.entrySet»
+				<property name="«prop.key»" type="String" value="«prop.value»"/>					
+			«ENDFOR»
+			</scr:component>
+		''');
+	}
+	
+	
 	
 	private def ServiceInfo parseServiceDefinition(ClassDeclaration annotatedClass, Class<?> annotation) {
 		val serviceAnnotation = annotatedClass.annotations.findFirst( [ a | a.annotationTypeDeclaration.simpleName == annotation.simpleName ] ) 

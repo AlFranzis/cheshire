@@ -1,5 +1,6 @@
 package al.franzis.cheshire.service;
 
+import al.franzis.cheshire.service.PathHelper;
 import al.franzis.cheshire.service.ReferencedServiceInfo;
 import al.franzis.cheshire.service.Service;
 import al.franzis.cheshire.service.ServiceBindMethod;
@@ -23,6 +24,9 @@ import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.ParameterDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.TypeReference;
+import org.eclipse.xtend.lib.macro.file.FileLocations;
+import org.eclipse.xtend.lib.macro.file.FileSystemSupport;
+import org.eclipse.xtend.lib.macro.file.MutableFileSystemSupport;
 import org.eclipse.xtend.lib.macro.file.Path;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Conversions;
@@ -54,84 +58,93 @@ public class ServiceProcessor extends AbstractClassProcessor {
       }
     };
     annotatedClass.addMethod("activate", _function);
+    boolean _isEclipseEnvironment = PathHelper.isEclipseEnvironment();
+    boolean _not = (!_isEclipseEnvironment);
+    if (_not) {
+      this.createOSGiServiceFile(context, null, context, annotatedClass);
+    }
   }
   
-  public void doGenerateCode(final List<? extends ClassDeclaration> annotatedSourceElements, @Extension final CodeGenerationContext context) {
-    for (final ClassDeclaration clazz : annotatedSourceElements) {
-      {
-        CompilationUnit _compilationUnit = clazz.getCompilationUnit();
-        final Path filePath = _compilationUnit.getFilePath();
-        final Path projectPath = context.getProjectFolder(filePath);
-        final Path osgiInfPath = projectPath.append("OSGI-INF");
-        context.mkdir(osgiInfPath);
-        String _simpleName = clazz.getSimpleName();
-        String _plus = (_simpleName + ".xml");
-        final Path file = osgiInfPath.append(_plus);
-        final ServiceInfo serviceInfo = this.parseServiceDefinition(clazz, Service.class);
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        _builder.newLine();
-        _builder.append("<scr:component xmlns:scr=\"http://www.osgi.org/xmlns/scr/v1.1.0\" name=\"");
-        String _name = serviceInfo.getName();
-        _builder.append(_name, "");
-        _builder.append("\">");
-        _builder.newLineIfNotEmpty();
-        _builder.append("   \t\t\t\t");
-        _builder.append("<implementation class=\"");
-        String _qualifiedName = clazz.getQualifiedName();
-        _builder.append(_qualifiedName, "   \t\t\t\t");
+  public void doGenerateCode(final ClassDeclaration annotatedClass, @Extension final CodeGenerationContext context) {
+    boolean _isEclipseEnvironment = PathHelper.isEclipseEnvironment();
+    if (_isEclipseEnvironment) {
+      this.createOSGiServiceFile(context, context, context, annotatedClass);
+    }
+  }
+  
+  private void createOSGiServiceFile(final FileLocations fl, @Extension final MutableFileSystemSupport mfss, @Extension final FileSystemSupport fs, final ClassDeclaration serviceClass) {
+    CompilationUnit _compilationUnit = serviceClass.getCompilationUnit();
+    final Path filePath = _compilationUnit.getFilePath();
+    final Path projectPath = fl.getProjectFolder(filePath);
+    final Path osgiInfPath = projectPath.append("OSGI-INF");
+    String _simpleName = serviceClass.getSimpleName();
+    String _plus = (_simpleName + ".xml");
+    final Path file = osgiInfPath.append(_plus);
+    final ServiceInfo serviceInfo = this.parseServiceDefinition(serviceClass, Service.class);
+    PathHelper _instance = PathHelper.getInstance();
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    _builder.newLine();
+    _builder.append("<scr:component xmlns:scr=\"http://www.osgi.org/xmlns/scr/v1.1.0\" name=\"");
+    String _name = serviceInfo.getName();
+    _builder.append(_name, "");
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t\t");
+    _builder.append("<implementation class=\"");
+    String _qualifiedName = serviceClass.getQualifiedName();
+    _builder.append(_qualifiedName, "\t\t\t");
+    _builder.append("\"/>");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t\t");
+    _builder.append("<service>");
+    _builder.newLine();
+    {
+      String[] _providedServices = serviceInfo.getProvidedServices();
+      for(final String providedService : _providedServices) {
+        _builder.append("\t\t\t\t");
+        _builder.append("<provide interface=\"");
+        _builder.append(providedService, "\t\t\t\t");
         _builder.append("\"/>");
         _builder.newLineIfNotEmpty();
-        _builder.append("   \t\t\t\t");
-        _builder.append("<service>");
-        _builder.newLine();
-        {
-          String[] _providedServices = serviceInfo.getProvidedServices();
-          for(final String providedService : _providedServices) {
-            _builder.append("<provide interface=\"");
-            _builder.append(providedService, "");
-            _builder.append("\"/>");
-            _builder.newLineIfNotEmpty();
-          }
-        }
-        _builder.append("   \t\t\t\t");
-        _builder.append("</service>");
-        _builder.newLine();
-        _builder.append("   \t\t\t\t");
-        _builder.newLine();
-        {
-          ReferencedServiceInfo[] _referencedServices = serviceInfo.getReferencedServices();
-          for(final ReferencedServiceInfo refService : _referencedServices) {
-            _builder.append("   \t\t\t\t");
-            _builder.append("<reference bind=\"");
-            String _bindMethodName = refService.getBindMethodName();
-            _builder.append(_bindMethodName, "   \t\t\t\t");
-            _builder.append("\" cardinality=\"0..n\" interface=\"");
-            String _name_1 = refService.getName();
-            _builder.append(_name_1, "   \t\t\t\t");
-            _builder.append("\" name=\"IPlugin\" policy=\"static\"/>");
-            _builder.newLineIfNotEmpty();
-          }
-        }
-        {
-          Map<String,String> _properties = serviceInfo.getProperties();
-          Set<Map.Entry<String,String>> _entrySet = _properties.entrySet();
-          for(final Map.Entry<String, String> prop : _entrySet) {
-            _builder.append("<property name=\"");
-            String _key = prop.getKey();
-            _builder.append(_key, "");
-            _builder.append("\" type=\"String\" value=\"");
-            String _value = prop.getValue();
-            _builder.append(_value, "");
-            _builder.append("\"/>\t\t\t\t\t");
-            _builder.newLineIfNotEmpty();
-          }
-        }
-        _builder.append("</scr:component>");
-        _builder.newLine();
-        context.setContents(file, _builder);
       }
     }
+    _builder.append("\t\t\t");
+    _builder.append("</service>");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.newLine();
+    {
+      ReferencedServiceInfo[] _referencedServices = serviceInfo.getReferencedServices();
+      for(final ReferencedServiceInfo refService : _referencedServices) {
+        _builder.append("\t\t\t");
+        _builder.append("<reference bind=\"");
+        String _bindMethodName = refService.getBindMethodName();
+        _builder.append(_bindMethodName, "\t\t\t");
+        _builder.append("\" cardinality=\"0..n\" interface=\"");
+        String _name_1 = refService.getName();
+        _builder.append(_name_1, "\t\t\t");
+        _builder.append("\" name=\"IPlugin\" policy=\"static\"/>");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    {
+      Map<String,String> _properties = serviceInfo.getProperties();
+      Set<Map.Entry<String,String>> _entrySet = _properties.entrySet();
+      for(final Map.Entry<String, String> prop : _entrySet) {
+        _builder.append("<property name=\"");
+        String _key = prop.getKey();
+        _builder.append(_key, "");
+        _builder.append("\" type=\"String\" value=\"");
+        String _value = prop.getValue();
+        _builder.append(_value, "");
+        _builder.append("\"/>\t\t\t\t\t");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.append("</scr:component>");
+    _builder.newLine();
+    _instance.setContents(mfss, osgiInfPath, file, _builder);
   }
   
   private ServiceInfo parseServiceDefinition(final ClassDeclaration annotatedClass, final Class<? extends Object> annotation) {
