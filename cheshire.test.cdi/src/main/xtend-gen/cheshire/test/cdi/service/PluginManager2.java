@@ -14,18 +14,12 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @Service(name = "PluginManager2", providedServices = { "cheshire.test.cdi.service.IPluginManager" }, referencedServices = { "cheshire.test.cdi.service.IPlugin" }, properties = { "Prop1", "Value1", "Prop2", "Value2" })
 @SuppressWarnings("all")
 public class PluginManager2 implements IPluginManager, IServiceDefinition {
-  private final ArrayList<IPlugin> plugins = new Function0<ArrayList<IPlugin>>() {
-    public ArrayList<IPlugin> apply() {
-      ArrayList<IPlugin> _arrayList = new ArrayList<IPlugin>();
-      return _arrayList;
-    }
-  }.apply();
+  private final ArrayList<IPlugin> plugins = new ArrayList<IPlugin>();
   
   public PluginManager2() {
     InputOutput.<String>println("PluginManager2 created");
@@ -38,7 +32,7 @@ public class PluginManager2 implements IPluginManager, IServiceDefinition {
   @ServiceActivationMethod
   public void activate(final IServiceContext serviceContext) {
     InputOutput.<String>println("PluginManager2.activate() called");
-    Map<String,String> _properties = serviceContext.getProperties();
+    Map<String, String> _properties = serviceContext.getProperties();
     String _plus = ("PluginManager2 service properties: " + _properties);
     InputOutput.<String>println(_plus);
   }

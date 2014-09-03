@@ -28,8 +28,7 @@ public class Logger {
       final Path filePath = _compilationUnit.getFilePath();
       Path _parent = filePath.getParent();
       final Path loggerFile = _parent.append("processor.log");
-      Logger _logger = new Logger(loggerFile, cxt);
-      _xblockexpression = (_logger);
+      _xblockexpression = new Logger(loggerFile, cxt);
     }
     return _xblockexpression;
   }
@@ -41,27 +40,23 @@ public class Logger {
   
   public void info(final String msg) {
     String _readExistingFile = this.readExistingFile();
-    StringBuffer _stringBuffer = new StringBuffer(_readExistingFile);
-    final StringBuffer buf = _stringBuffer;
+    final StringBuffer buf = new StringBuffer(_readExistingFile);
     buf.append("\n");
     buf.append(msg);
     String _string = buf.toString();
-    this.cxt.setContents(
-      this.loggerFile, _string);
+    this.cxt.setContents(this.loggerFile, _string);
   }
   
   public void error(final String msg, final Throwable t) {
     String _readExistingFile = this.readExistingFile();
-    StringBuffer _stringBuffer = new StringBuffer(_readExistingFile);
-    final StringBuffer buf = _stringBuffer;
+    final StringBuffer buf = new StringBuffer(_readExistingFile);
     buf.append("\n");
     buf.append(msg);
     buf.append("\n");
     String _stackTrace = this.stackTrace(t);
     buf.append(_stackTrace);
     String _string = buf.toString();
-    this.cxt.setContents(
-      this.loggerFile, _string);
+    this.cxt.setContents(this.loggerFile, _string);
   }
   
   private String readExistingFile() {
@@ -74,7 +69,7 @@ public class Logger {
         String _read = this.read(_contentsAsStream);
         s = _read;
       }
-      _xblockexpression = (s);
+      _xblockexpression = s;
     }
     return _xblockexpression;
   }
@@ -85,8 +80,7 @@ public class Logger {
       {
         InputStreamReader _inputStreamReader = new InputStreamReader(in);
         final List<String> lines = CharStreams.readLines(_inputStreamReader);
-        String _join = IterableExtensions.join(lines, "\n");
-        _xblockexpression = (_join);
+        _xblockexpression = IterableExtensions.join(lines, "\n");
       }
       return _xblockexpression;
     } catch (Throwable _e) {
@@ -98,15 +92,12 @@ public class Logger {
     try {
       String _xblockexpression = null;
       {
-        ByteArrayOutputStream _byteArrayOutputStream = new ByteArrayOutputStream();
-        final ByteArrayOutputStream out = _byteArrayOutputStream;
-        PrintStream _printStream = new PrintStream(out);
-        final PrintStream stream = _printStream;
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final PrintStream stream = new PrintStream(out);
         t.printStackTrace(stream);
         out.close();
         byte[] _byteArray = out.toByteArray();
-        String _string = new String(_byteArray);
-        _xblockexpression = (_string);
+        _xblockexpression = new String(_byteArray);
       }
       return _xblockexpression;
     } catch (Throwable _e) {

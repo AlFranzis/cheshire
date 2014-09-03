@@ -21,5 +21,5 @@ public interface IModuleContext {
   
   public abstract <S extends Object> S getService(final IServiceReference<S> serviceReference);
   
-  public abstract void ungetService(final IServiceReference<? extends Object> serviceReference);
+  public abstract void ungetService(final IServiceReference<?> serviceReference);
 }

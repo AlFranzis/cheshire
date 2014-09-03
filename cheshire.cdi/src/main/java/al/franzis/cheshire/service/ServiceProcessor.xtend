@@ -54,7 +54,8 @@ class ServiceProcessor extends AbstractClassProcessor {
     		type = cdiModuleFrameworkType
       	]
 		
-		val injectAnnotationType = context.findTypeGlobally("javax.inject.Inject")
+//		val injectAnnotationType = context.findTypeGlobally("javax.inject.Inject")
+		val injectAnnotationType = context.newAnnotationReference("javax.inject.Inject")
 		
 		annotatedClass.addMethod("setModuleFramework") [
 			addAnnotation(injectAnnotationType)
@@ -64,7 +65,8 @@ class ServiceProcessor extends AbstractClassProcessor {
       		''']
       	]
       	
-      	val postConstructAnnotationType = context.findTypeGlobally("javax.annotation.PostConstruct")
+//      	val postConstructAnnotationType = context.findTypeGlobally("javax.annotation.PostConstruct")
+      	val postConstructAnnotationType = context.newAnnotationReference("javax.annotation.PostConstruct")
       	
       	annotatedClass.addMethod("init") [
 			addAnnotation(postConstructAnnotationType)

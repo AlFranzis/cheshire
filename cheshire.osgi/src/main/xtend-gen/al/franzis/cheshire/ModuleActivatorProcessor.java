@@ -11,10 +11,10 @@ import java.util.List;
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor;
 import org.eclipse.xtend.lib.macro.CodeGenerationContext;
 import org.eclipse.xtend.lib.macro.TransformationContext;
+import org.eclipse.xtend.lib.macro.declaration.AnnotationReference;
 import org.eclipse.xtend.lib.macro.declaration.AnnotationTypeDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy;
-import org.eclipse.xtend.lib.macro.declaration.MutableAnnotationReference;
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.TypeReference;
@@ -82,17 +82,16 @@ public class ModuleActivatorProcessor extends AbstractClassProcessor {
     annotatedClass.addMethod("stop", _function_1);
   }
   
-  private MutableMethodDeclaration findAnnotatedMethod(final MutableClassDeclaration annotatedClass, final Class<? extends Object> annotation) {
+  private MutableMethodDeclaration findAnnotatedMethod(final MutableClassDeclaration annotatedClass, final Class<?> annotation) {
     Iterable<? extends MutableMethodDeclaration> _declaredMethods = annotatedClass.getDeclaredMethods();
     for (final MutableMethodDeclaration method : _declaredMethods) {
-      Iterable<? extends MutableAnnotationReference> _annotations = method.getAnnotations();
-      final Function1<MutableAnnotationReference,Boolean> _function = new Function1<MutableAnnotationReference,Boolean>() {
-        public Boolean apply(final MutableAnnotationReference m) {
+      Iterable<? extends AnnotationReference> _annotations = method.getAnnotations();
+      final Function1<AnnotationReference, Boolean> _function = new Function1<AnnotationReference, Boolean>() {
+        public Boolean apply(final AnnotationReference m) {
           AnnotationTypeDeclaration _annotationTypeDeclaration = m.getAnnotationTypeDeclaration();
           String _simpleName = _annotationTypeDeclaration.getSimpleName();
           String _simpleName_1 = annotation.getSimpleName();
-          boolean _equals = Objects.equal(_simpleName, _simpleName_1);
-          return Boolean.valueOf(_equals);
+          return Boolean.valueOf(Objects.equal(_simpleName, _simpleName_1));
         }
       };
       boolean _exists = IterableExtensions.exists(_annotations, _function);

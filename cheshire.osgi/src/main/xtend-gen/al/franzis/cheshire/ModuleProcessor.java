@@ -1,6 +1,7 @@
 package al.franzis.cheshire;
 
 import al.franzis.cheshire.Logger;
+import com.google.common.base.Objects;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class ModuleProcessor extends AbstractClassProcessor {
           Logger _logger = Logger.getLogger(clazz, context);
           this.logger = _logger;
           try {
-            final Map<String,String> fieldMap = this.parse(clazz);
+            final Map<String, String> fieldMap = this.parse(clazz);
             final String bundleName = fieldMap.remove("Bundle-Name");
             String _remove = fieldMap.remove("Service-Component");
             final String serviceDefs = this.processServiceDefinitions(_remove);
@@ -60,7 +61,7 @@ public class ModuleProcessor extends AbstractClassProcessor {
             _builder.append(serviceDefs, "");
             _builder.newLineIfNotEmpty();
             {
-              Set<Map.Entry<String,String>> _entrySet = fieldMap.entrySet();
+              Set<Map.Entry<String, String>> _entrySet = fieldMap.entrySet();
               for(final Map.Entry<String, String> entry : _entrySet) {
                 String _key = entry.getKey();
                 _builder.append(_key, "");
@@ -90,10 +91,14 @@ public class ModuleProcessor extends AbstractClassProcessor {
   private String processServiceDefinitions(final String serviceDefinitions) {
     String _xblockexpression = null;
     {
+      boolean _equals = Objects.equal(serviceDefinitions, null);
+      if (_equals) {
+        return "";
+      }
       String _replaceAll = serviceDefinitions.replaceAll("\\s", "");
       String[] sdefs = _replaceAll.split(",");
       final String[] _converted_sdefs = (String[])sdefs;
-      final Function1<String,String> _function = new Function1<String,String>() {
+      final Function1<String, String> _function = new Function1<String, String>() {
         public String apply(final String s) {
           String _xblockexpression = null;
           {
@@ -104,24 +109,21 @@ public class ModuleProcessor extends AbstractClassProcessor {
               String _substring = s.substring((idx + 1), _length);
               unq = _substring;
             }
-            String _unq = unq = (("OSGI-INF/" + unq) + ".xml");
-            _xblockexpression = (_unq);
+            _xblockexpression = unq = (("OSGI-INF/" + unq) + ".xml");
           }
           return _xblockexpression;
         }
       };
       final List<String> ss = ListExtensions.<String, String>map(((List<String>)Conversions.doWrapArray(_converted_sdefs)), _function);
-      String _flatten = this.flatten(((String[])Conversions.unwrapArray(ss, String.class)));
-      _xblockexpression = (_flatten);
+      _xblockexpression = this.flatten(((String[])Conversions.unwrapArray(ss, String.class)));
     }
     return _xblockexpression;
   }
   
-  private Map<String,String> parse(final ClassDeclaration annotatedClass) {
-    Map<String,String> _xblockexpression = null;
+  private Map<String, String> parse(final ClassDeclaration annotatedClass) {
+    Map<String, String> _xblockexpression = null;
     {
-      HashMap<String,String> _hashMap = new HashMap<String, String>();
-      final Map<String,String> keyValueMap = _hashMap;
+      final Map<String, String> keyValueMap = new HashMap<String, String>();
       Iterable<? extends FieldDeclaration> _declaredFields = annotatedClass.getDeclaredFields();
       for (final FieldDeclaration field : _declaredFields) {
         {
@@ -151,7 +153,7 @@ public class ModuleProcessor extends AbstractClassProcessor {
           keyValueMap.put(key, value);
         }
       }
-      _xblockexpression = (keyValueMap);
+      _xblockexpression = keyValueMap;
     }
     return _xblockexpression;
   }
@@ -159,8 +161,7 @@ public class ModuleProcessor extends AbstractClassProcessor {
   private String flatten(final String[] ss) {
     String _xblockexpression = null;
     {
-      StringBuffer _stringBuffer = new StringBuffer();
-      final StringBuffer buf = _stringBuffer;
+      final StringBuffer buf = new StringBuffer();
       boolean first = true;
       for (final String s : ss) {
         {
@@ -171,7 +172,7 @@ public class ModuleProcessor extends AbstractClassProcessor {
             _and = false;
           } else {
             boolean _endsWith = _s.endsWith("\"");
-            _and = (_startsWith && _endsWith);
+            _and = _endsWith;
           }
           if (_and) {
             int _length = _s.length();
@@ -186,8 +187,7 @@ public class ModuleProcessor extends AbstractClassProcessor {
           first = false;
         }
       }
-      String _string = buf.toString();
-      _xblockexpression = (_string);
+      _xblockexpression = buf.toString();
     }
     return _xblockexpression;
   }

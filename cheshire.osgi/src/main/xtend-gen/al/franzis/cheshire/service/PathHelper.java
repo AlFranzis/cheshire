@@ -11,11 +11,9 @@ public class PathHelper {
   public static PathHelper getInstance() {
     boolean _isEclipseEnvironment = PathHelper.isEclipseEnvironment();
     if (_isEclipseEnvironment) {
-      PathHelper _pathHelper = new PathHelper();
-      return _pathHelper;
+      return new PathHelper();
     } else {
-      PathHelperMaven _pathHelperMaven = new PathHelperMaven();
-      return _pathHelperMaven;
+      return new PathHelperMaven();
     }
   }
   
@@ -30,7 +28,6 @@ public class PathHelper {
   
   public static boolean isEclipseEnvironment() {
     String _property = System.getProperty("xtend.annotations.project.dir");
-    boolean _equals = Objects.equal(_property, null);
-    return _equals;
+    return Objects.equal(_property, null);
   }
 }

@@ -26,13 +26,13 @@ public class ServiceInfo {
     return this._providedServices;
   }
   
-  private final Map<String,String> _properties;
+  private final Map<String, String> _properties;
   
-  public Map<String,String> getProperties() {
+  public Map<String, String> getProperties() {
     return this._properties;
   }
   
-  public ServiceInfo(final String name, final ReferencedServiceInfo[] referencedServices, final String[] providedServices, final Map<String,String> properties) {
+  public ServiceInfo(final String name, final ReferencedServiceInfo[] referencedServices, final String[] providedServices, final Map<String, String> properties) {
     super();
     this._name = name;
     this._referencedServices = referencedServices;
@@ -44,10 +44,10 @@ public class ServiceInfo {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((_name== null) ? 0 : _name.hashCode());
-    result = prime * result + ((_referencedServices== null) ? 0 : _referencedServices.hashCode());
-    result = prime * result + ((_providedServices== null) ? 0 : _providedServices.hashCode());
-    result = prime * result + ((_properties== null) ? 0 : _properties.hashCode());
+    result = prime * result + ((this._name== null) ? 0 : this._name.hashCode());
+    result = prime * result + ((this._referencedServices== null) ? 0 : this._referencedServices.hashCode());
+    result = prime * result + ((this._providedServices== null) ? 0 : this._providedServices.hashCode());
+    result = prime * result + ((this._properties== null) ? 0 : this._properties.hashCode());
     return result;
   }
   
@@ -60,25 +60,25 @@ public class ServiceInfo {
     if (getClass() != obj.getClass())
       return false;
     ServiceInfo other = (ServiceInfo) obj;
-    if (_name == null) {
+    if (this._name == null) {
       if (other._name != null)
         return false;
-    } else if (!_name.equals(other._name))
+    } else if (!this._name.equals(other._name))
       return false;
-    if (_referencedServices == null) {
+    if (this._referencedServices == null) {
       if (other._referencedServices != null)
         return false;
-    } else if (!_referencedServices.equals(other._referencedServices))
+    } else if (!this._referencedServices.equals(other._referencedServices))
       return false;
-    if (_providedServices == null) {
+    if (this._providedServices == null) {
       if (other._providedServices != null)
         return false;
-    } else if (!_providedServices.equals(other._providedServices))
+    } else if (!this._providedServices.equals(other._providedServices))
       return false;
-    if (_properties == null) {
+    if (this._properties == null) {
       if (other._properties != null)
         return false;
-    } else if (!_properties.equals(other._properties))
+    } else if (!this._properties.equals(other._properties))
       return false;
     return true;
   }

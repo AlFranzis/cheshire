@@ -57,6 +57,9 @@ class ModuleProcessor extends AbstractClassProcessor {
 	}
 	
 	private def String processServiceDefinitions( String serviceDefinitions ) {
+		if ( serviceDefinitions == null )
+			return "";
+			
 		var sdefs = serviceDefinitions.replaceAll("\\s", "").split(",")
 		
 		val ss = sdefs.map([s | 

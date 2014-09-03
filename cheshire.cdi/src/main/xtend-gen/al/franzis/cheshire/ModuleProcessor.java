@@ -7,12 +7,12 @@ import java.util.Collections;
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor;
 import org.eclipse.xtend.lib.macro.CodeGenerationContext;
 import org.eclipse.xtend.lib.macro.TransformationContext;
+import org.eclipse.xtend.lib.macro.declaration.AnnotationReference;
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy;
 import org.eclipse.xtend.lib.macro.declaration.FieldDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration;
-import org.eclipse.xtend.lib.macro.declaration.Type;
 import org.eclipse.xtend.lib.macro.declaration.TypeReference;
 import org.eclipse.xtend.lib.macro.expression.Expression;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -29,10 +29,9 @@ public class ModuleProcessor extends AbstractClassProcessor {
       final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(Lists.<TypeReference>newArrayList(moduleManifestType)));
       annotatedClass.setImplementedInterfaces(implInterfaces);
       final String nativeClauses = this.parseNativeClauses(annotatedClass);
-      NativeLibHandler _nativeLibHandler = new NativeLibHandler(nativeClauses);
-      final NativeLibHandler libHandler = _nativeLibHandler;
+      final NativeLibHandler libHandler = new NativeLibHandler(nativeClauses);
       final String nativeLibs = libHandler.getModuleNativeLibs();
-      final Type postConstructAnnotationType = context.findTypeGlobally("javax.annotation.PostConstruct");
+      final AnnotationReference postConstructAnnotationType = context.newAnnotationReference("javax.annotation.PostConstruct");
       final Procedure1<MutableMethodDeclaration> _function = new Procedure1<MutableMethodDeclaration>() {
         public void apply(final MutableMethodDeclaration it) {
           it.addAnnotation(postConstructAnnotationType);
@@ -75,7 +74,7 @@ public class ModuleProcessor extends AbstractClassProcessor {
           }
         }
       }
-      _xblockexpression = (null);
+      _xblockexpression = null;
     }
     return _xblockexpression;
   }

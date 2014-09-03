@@ -28,7 +28,8 @@ class ModuleProcessor extends AbstractClassProcessor {
 		val libHandler = new NativeLibHandler(nativeClauses);
 		val nativeLibs = libHandler.moduleNativeLibs
       	
-		val postConstructAnnotationType = context.findTypeGlobally("javax.annotation.PostConstruct")
+//		val postConstructAnnotationType = context.findTypeGlobally("javax.annotation.PostConstruct")
+		val postConstructAnnotationType = context.newAnnotationReference("javax.annotation.PostConstruct")
       	annotatedClass.addMethod("init") [
 			addAnnotation(postConstructAnnotationType)
       		body = ['''

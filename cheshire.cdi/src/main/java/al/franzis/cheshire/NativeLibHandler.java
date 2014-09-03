@@ -69,6 +69,9 @@ public class NativeLibHandler {
 	}
 	
 	public static void augmentJavaLibraryPath( String libPath ) {
+		if (libPath == null || "".equals(libPath))
+			return;
+		
 		try {
 			String javaLibPath = System.getProperty("java.library.path");
 			javaLibPath += ";" + libPath;
@@ -84,6 +87,9 @@ public class NativeLibHandler {
 	}
 	
 	private void parseLibClauses(String nativeLibClauses) {
+		if ( nativeLibClauses == null)
+			return;
+		
 		if ( !nativeLibClauses.startsWith("#[") && !nativeLibClauses.endsWith("]") )
 			throw new IllegalArgumentException("Invalid format of native clause: " + nativeLibClauses);
 		

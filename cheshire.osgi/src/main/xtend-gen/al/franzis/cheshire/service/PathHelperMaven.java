@@ -22,8 +22,7 @@ public class PathHelperMaven extends PathHelper {
         this.mkdirs(dirPath);
       }
       final File f = this.getFile(filePath);
-      FileWriter _fileWriter = new FileWriter(f);
-      final FileWriter fw = _fileWriter;
+      final FileWriter fw = new FileWriter(f);
       fw.append(cs);
       fw.close();
     } catch (Throwable _e) {
@@ -32,8 +31,7 @@ public class PathHelperMaven extends PathHelper {
   }
   
   private String getProjectDir() {
-    String _property = System.getProperty("xtend.annotations.project.dir");
-    return _property;
+    return System.getProperty("xtend.annotations.project.dir");
   }
   
   private boolean mkdirs(final Path path) {
@@ -41,7 +39,7 @@ public class PathHelperMaven extends PathHelper {
     {
       final File f = this.getFile(path);
       final boolean success = f.mkdirs();
-      _xblockexpression = (success);
+      _xblockexpression = success;
     }
     return _xblockexpression;
   }
@@ -50,14 +48,12 @@ public class PathHelperMaven extends PathHelper {
     File _xblockexpression = null;
     {
       List<String> _segments = path.getSegments();
-      ArrayList<String> _arrayList = new ArrayList<String>(_segments);
-      final ArrayList<String> pathSegments = _arrayList;
+      final ArrayList<String> pathSegments = new ArrayList<String>(_segments);
       final String projectDir = this.getProjectDir();
       pathSegments.remove(0);
       FileSystem _default = FileSystems.getDefault();
       final java.nio.file.Path p = _default.getPath(projectDir, ((String[])Conversions.unwrapArray(pathSegments, String.class)));
-      File _file = p.toFile();
-      _xblockexpression = (_file);
+      _xblockexpression = p.toFile();
     }
     return _xblockexpression;
   }

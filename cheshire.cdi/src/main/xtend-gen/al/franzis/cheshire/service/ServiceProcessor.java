@@ -24,7 +24,6 @@ import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.ParameterDeclaration;
-import org.eclipse.xtend.lib.macro.declaration.Type;
 import org.eclipse.xtend.lib.macro.declaration.TypeReference;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Conversions;
@@ -49,7 +48,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
       }
     };
     annotatedClass.addField("moduleFramework", _function);
-    final Type injectAnnotationType = context.findTypeGlobally("javax.inject.Inject");
+    final AnnotationReference injectAnnotationType = context.newAnnotationReference("javax.inject.Inject");
     final Procedure1<MutableMethodDeclaration> _function_1 = new Procedure1<MutableMethodDeclaration>() {
       public void apply(final MutableMethodDeclaration it) {
         it.addAnnotation(injectAnnotationType);
@@ -66,7 +65,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
       }
     };
     annotatedClass.addMethod("setModuleFramework", _function_1);
-    final Type postConstructAnnotationType = context.findTypeGlobally("javax.annotation.PostConstruct");
+    final AnnotationReference postConstructAnnotationType = context.newAnnotationReference("javax.annotation.PostConstruct");
     final Procedure1<MutableMethodDeclaration> _function_2 = new Procedure1<MutableMethodDeclaration>() {
       public void apply(final MutableMethodDeclaration it) {
         it.addAnnotation(postConstructAnnotationType);
@@ -127,17 +126,16 @@ public class ServiceProcessor extends AbstractClassProcessor {
   public void doGenerateCode(final List<? extends ClassDeclaration> annotatedSourceElements, @Extension final CodeGenerationContext context) {
   }
   
-  private ServiceInfo parseServiceDefinition(final ClassDeclaration annotatedClass, final Class<? extends Object> annotation) {
+  private ServiceInfo parseServiceDefinition(final ClassDeclaration annotatedClass, final Class<?> annotation) {
     ServiceInfo _xblockexpression = null;
     {
       Iterable<? extends AnnotationReference> _annotations = annotatedClass.getAnnotations();
-      final Function1<AnnotationReference,Boolean> _function = new Function1<AnnotationReference,Boolean>() {
+      final Function1<AnnotationReference, Boolean> _function = new Function1<AnnotationReference, Boolean>() {
         public Boolean apply(final AnnotationReference a) {
           AnnotationTypeDeclaration _annotationTypeDeclaration = a.getAnnotationTypeDeclaration();
           String _simpleName = _annotationTypeDeclaration.getSimpleName();
           String _simpleName_1 = annotation.getSimpleName();
-          boolean _equals = Objects.equal(_simpleName, _simpleName_1);
-          return Boolean.valueOf(_equals);
+          return Boolean.valueOf(Objects.equal(_simpleName, _simpleName_1));
         }
       };
       final AnnotationReference serviceAnnotation = IterableExtensions.findFirst(_annotations, _function);
@@ -150,14 +148,13 @@ public class ServiceProcessor extends AbstractClassProcessor {
       Object _value_2 = serviceAnnotation.getValue("referencedServices");
       final String[] referencedServicesNames = ((String[]) _value_2);
       InputOutput.<String[]>println(referencedServicesNames);
-      final Map<String,String> bindMethodMap = this.getBindMethodsMap(annotatedClass);
-      final Function1<String,ReferencedServiceInfo> _function_1 = new Function1<String,ReferencedServiceInfo>() {
+      final Map<String, String> bindMethodMap = this.getBindMethodsMap(annotatedClass);
+      final Function1<String, ReferencedServiceInfo> _function_1 = new Function1<String, ReferencedServiceInfo>() {
         public ReferencedServiceInfo apply(final String sn) {
           ReferencedServiceInfo _xblockexpression = null;
           {
             final String bindMethodName = bindMethodMap.get(sn);
-            ReferencedServiceInfo _referencedServiceInfo = new ReferencedServiceInfo(sn, bindMethodName);
-            _xblockexpression = (_referencedServiceInfo);
+            _xblockexpression = new ReferencedServiceInfo(sn, bindMethodName);
           }
           return _xblockexpression;
         }
@@ -165,8 +162,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
       final List<ReferencedServiceInfo> referencedServices = ListExtensions.<String, ReferencedServiceInfo>map(((List<String>)Conversions.doWrapArray(referencedServicesNames)), _function_1);
       Object _value_3 = serviceAnnotation.getValue("properties");
       final String[] properties = ((String[]) _value_3);
-      HashMap<String,String> _hashMap = new HashMap<String, String>();
-      final Map<String,String> propertiesMap = _hashMap;
+      final Map<String, String> propertiesMap = new HashMap<String, String>();
       int i = (-1);
       int _length = properties.length;
       boolean _lessThan = ((i + 2) < _length);
@@ -185,17 +181,15 @@ public class ServiceProcessor extends AbstractClassProcessor {
         _while = _lessThan_1;
       }
       InputOutput.<String>println(("Service properties: " + propertiesMap));
-      ServiceInfo _serviceInfo = new ServiceInfo(serviceName, ((ReferencedServiceInfo[])Conversions.unwrapArray(referencedServices, ReferencedServiceInfo.class)), providedServicesNames, propertiesMap);
-      _xblockexpression = (_serviceInfo);
+      _xblockexpression = new ServiceInfo(serviceName, ((ReferencedServiceInfo[])Conversions.unwrapArray(referencedServices, ReferencedServiceInfo.class)), providedServicesNames, propertiesMap);
     }
     return _xblockexpression;
   }
   
-  private Map<String,String> getBindMethodsMap(final ClassDeclaration clazzDeclaration) {
-    Map<String,String> _xblockexpression = null;
+  private Map<String, String> getBindMethodsMap(final ClassDeclaration clazzDeclaration) {
+    Map<String, String> _xblockexpression = null;
     {
-      HashMap<String,String> _hashMap = new HashMap<String, String>();
-      final Map<String,String> bindMethodsMap = _hashMap;
+      final Map<String, String> bindMethodsMap = new HashMap<String, String>();
       List<MethodDeclaration> _findAnnotatedMethod = this.findAnnotatedMethod(clazzDeclaration, ServiceBindMethod.class);
       for (final MethodDeclaration method : _findAnnotatedMethod) {
         Iterable<? extends ParameterDeclaration> _parameters = method.getParameters();
@@ -206,34 +200,32 @@ public class ServiceProcessor extends AbstractClassProcessor {
         String _simpleName = method.getSimpleName();
         bindMethodsMap.put(_name, _simpleName);
       }
-      _xblockexpression = (bindMethodsMap);
+      _xblockexpression = bindMethodsMap;
     }
     return _xblockexpression;
   }
   
-  private List<MethodDeclaration> findAnnotatedMethod(final ClassDeclaration annotatedClass, final Class<? extends Object> annotation) {
+  private List<MethodDeclaration> findAnnotatedMethod(final ClassDeclaration annotatedClass, final Class<?> annotation) {
     List<MethodDeclaration> _xblockexpression = null;
     {
       Iterable<? extends MethodDeclaration> _declaredMethods = annotatedClass.getDeclaredMethods();
-      final Function1<MethodDeclaration,Boolean> _function = new Function1<MethodDeclaration,Boolean>() {
+      final Function1<MethodDeclaration, Boolean> _function = new Function1<MethodDeclaration, Boolean>() {
         public Boolean apply(final MethodDeclaration m) {
           Iterable<? extends AnnotationReference> _annotations = m.getAnnotations();
-          final Function1<AnnotationReference,Boolean> _function = new Function1<AnnotationReference,Boolean>() {
+          final Function1<AnnotationReference, Boolean> _function = new Function1<AnnotationReference, Boolean>() {
             public Boolean apply(final AnnotationReference a) {
               AnnotationTypeDeclaration _annotationTypeDeclaration = a.getAnnotationTypeDeclaration();
               String _simpleName = _annotationTypeDeclaration.getSimpleName();
               String _simpleName_1 = annotation.getSimpleName();
-              boolean _equals = Objects.equal(_simpleName, _simpleName_1);
-              return Boolean.valueOf(_equals);
+              return Boolean.valueOf(Objects.equal(_simpleName, _simpleName_1));
             }
           };
-          boolean _exists = IterableExtensions.exists(_annotations, _function);
-          return Boolean.valueOf(_exists);
+          return Boolean.valueOf(IterableExtensions.exists(_annotations, _function));
         }
       };
       Iterable<? extends MethodDeclaration> _filter = IterableExtensions.filter(_declaredMethods, _function);
       final List<? extends MethodDeclaration> annotatedMethods = IterableExtensions.toList(_filter);
-      _xblockexpression = (((List<MethodDeclaration>) annotatedMethods));
+      _xblockexpression = ((List<MethodDeclaration>) annotatedMethods);
     }
     return _xblockexpression;
   }

@@ -12,14 +12,13 @@ import org.osgi.service.component.ComponentContext;
 @SuppressWarnings("all")
 public class PluginA implements IPlugin {
   public String PluginA() {
-    String _println = InputOutput.<String>println("PluginA created");
-    return _println;
+    return InputOutput.<String>println("PluginA created");
   }
   
   @ServiceActivationMethod
   public void activate(final IServiceContext serviceContext) {
     System.out.println("PluginA.activate() called");
-    Map<String,String> _properties = serviceContext.getProperties();
+    Map<String, String> _properties = serviceContext.getProperties();
     String _plus = ("PluginA service properties: " + _properties);
     System.out.println(_plus);
   }
