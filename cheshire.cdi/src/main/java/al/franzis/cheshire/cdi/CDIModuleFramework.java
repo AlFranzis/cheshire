@@ -12,8 +12,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.weld.environment.se.events.ContainerInitialized;
-
 import al.franzis.cheshire.IModuleContext;
 import al.franzis.cheshire.ModuleContextMethod;
 import al.franzis.cheshire.ModuleStartMethod;
@@ -48,7 +46,15 @@ public class CDIModuleFramework {
 		return moduleCxt;
 	}
 	
-	public void start(@Observes ContainerInitialized event) {
+	public void start(@Observes Object event) {
+		/*
+		 * Ugly: We are only interested in beeing notified about container-initialization
+		 * - @Observes Object -> we observe every event -> potential performance hit
+		 * - @Observes: org.jboss.weld.environment.se.events.ContainerInitialized -> Dependency to Weld implementation
+		 */
+		if ( !event.getClass().getName().equals("org.jboss.weld.environment.se.events.ContainerInitialized") )
+			return;
+		
 		System.out.println("Starting module framework");
 		Set<Bean<?>> manifestBeans = beanManager.getBeans(ICDIModuleManifest.class);
 		for(Bean<?> manifestBean : manifestBeans) {
@@ -89,8 +95,12 @@ public class CDIModuleFramework {
 	
 	private void injectModuleContext( Object activator, IModuleContext moduleContext ) {
 		try {
-			Method moduleContextMethod = Helpers.getAnnotatedMethod(activator.getClass(), ModuleContextMethod.class);
-			moduleContextMethod.invoke(activator, moduleContext);
+			Class<?> activatorClass = activator.getClass();
+			Method moduleContextMethod = Helpers.getAnnotatedMethod(activatorClass, ModuleContextMethod.class);
+			if ( moduleContextMethod != null )
+				moduleContextMethod.invoke(activator, moduleContext);
+			else
+				System.out.println( String.format( "Module Activator class %s does not contain module context setter-method (@ModuleContextMethod)", activatorClass.getSimpleName() ) );
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
