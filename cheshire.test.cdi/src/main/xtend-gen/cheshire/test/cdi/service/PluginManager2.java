@@ -6,6 +6,7 @@ import al.franzis.cheshire.service.IServiceDefinition;
 import al.franzis.cheshire.service.Service;
 import al.franzis.cheshire.service.ServiceActivationMethod;
 import al.franzis.cheshire.service.ServiceBindMethod;
+import al.franzis.cheshire.service.ServiceImplementation;
 import cheshire.test.cdi.service.IPlugin;
 import cheshire.test.cdi.service.IPluginManager;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @Service(name = "PluginManager2", providedServices = { "cheshire.test.cdi.service.IPluginManager" }, referencedServices = { "cheshire.test.cdi.service.IPlugin" }, properties = { "Prop1", "Value1", "Prop2", "Value2" })
+@ServiceImplementation
 @SuppressWarnings("all")
 public class PluginManager2 implements IPluginManager, IServiceDefinition {
   private final ArrayList<IPlugin> plugins = new ArrayList<IPlugin>();
@@ -55,7 +57,7 @@ public class PluginManager2 implements IPluginManager, IServiceDefinition {
   }
   
   @Inject
-  public void setInstances0(final Instance<IPlugin> instances) {
+  public void setInstances0(@ServiceImplementation final Instance<IPlugin> instances) {
     java.util.Iterator<cheshire.test.cdi.service.IPlugin> it = instances.iterator();
     					while(it.hasNext()) {
     						addPlugin(it.next());

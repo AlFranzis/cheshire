@@ -14,6 +14,7 @@ import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MethodDeclaration
+import al.franzis.cheshire.Logger
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -41,12 +42,15 @@ annotation Service {
 }
 
 class ServiceProcessor extends AbstractClassProcessor {
+	val StringBuffer logMsgBuf = new StringBuffer;
 	
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-		
 		val serviceDefinitionType = context.newTypeReference("al.franzis.cheshire.service.IServiceDefinition")
 		val implInterfaces = annotatedClass.implementedInterfaces + #[ serviceDefinitionType ]
 		annotatedClass.setImplementedInterfaces(implInterfaces)
+		
+		val serviceImplementationAnnotationType = context.newAnnotationReference(ServiceImplementation)
+		annotatedClass.addAnnotation(serviceImplementationAnnotationType)
 		
 		val cdiModuleFrameworkType = context.newTypeReference("al.franzis.cheshire.cdi.CDIModuleFramework")
 		
@@ -81,13 +85,17 @@ class ServiceProcessor extends AbstractClassProcessor {
       	for ( referencedService : serviceInfo.referencedServices) {
       		val refServiceTypeName = referencedService.name
       		val instancesParameterType = context.newTypeReference(refServiceTypeName)
+      		
+      		if ( instancesParameterType == null )
+      			logMsgBuf.append( "WARN: Referenced service type name not found!\n" )
+      		
       		val instancesType = context.newTypeReference("javax.enterprise.inject.Instance", instancesParameterType)
       		
       		val bindMethodName = referencedService.bindMethodName
       		
       		annotatedClass.addMethod("setInstances" + i) [
 				addAnnotation(injectAnnotationType)
-				addParameter( "instances", instancesType )
+				addParameter( "instances", instancesType ).addAnnotation(serviceImplementationAnnotationType)
       			body = ['''
       				java.util.Iterator<«refServiceTypeName»> it = instances.iterator();
 					while(it.hasNext()) {
@@ -99,40 +107,46 @@ class ServiceProcessor extends AbstractClassProcessor {
       	}
 	}
 
-	override doGenerateCode(List<? extends ClassDeclaration> annotatedSourceElements, extension CodeGenerationContext context) {
+	override doGenerateCode(List<? extends ClassDeclaration> annotatedClasses, extension CodeGenerationContext context) {
+		for ( annotatedClass : annotatedClasses ) {
+			val logger = Logger.getLogger( annotatedClass, context)
+			logger.info(logMsgBuf.toString)		  	
+		}
 	}
 	
 	private def ServiceInfo parseServiceDefinition(ClassDeclaration annotatedClass, Class<?> annotation) {
-		val serviceAnnotation = annotatedClass.annotations.findFirst( [ a | a.annotationTypeDeclaration.simpleName == annotation.simpleName ] ) 
+		try {
+			val serviceAnnotation = annotatedClass.annotations.findFirst( [ a | a.annotationTypeDeclaration.simpleName == annotation.simpleName ] ) 
 
-		val serviceName = serviceAnnotation.getValue("name") as String
-		println( "Service name: " + serviceName)
+			val serviceName = serviceAnnotation.getValue("name") as String
 		
-		val String[] providedServicesNames = serviceAnnotation.getValue("providedServices") as String[];
-		println(providedServicesNames)
+			val String[] providedServicesNames = serviceAnnotation.getValue("providedServices") as String[];
 		
-		val String[] referencedServicesNames = serviceAnnotation.getValue("referencedServices") as String[];
-		println(referencedServicesNames)
+			val String[] referencedServicesNames = serviceAnnotation.getValue("referencedServices") as String[];
 		
-		val Map<String,String> bindMethodMap = getBindMethodsMap(annotatedClass)
-		val List<ReferencedServiceInfo> referencedServices = referencedServicesNames.map[ sn | 
-			val bindMethodName = bindMethodMap.get(sn)
-			new ReferencedServiceInfo(sn, bindMethodName)
-		]
+			val Map<String,String> bindMethodMap = getBindMethodsMap(annotatedClass)
+			val List<ReferencedServiceInfo> referencedServices = referencedServicesNames.map[ sn | 
+				val bindMethodName = bindMethodMap.get(sn)
+				new ReferencedServiceInfo(sn, bindMethodName)
+			]
 
-		val String[] properties = serviceAnnotation.getValue("properties") as String[];
-		val Map<String,String> propertiesMap = new HashMap();
+			val String[] properties = serviceAnnotation.getValue("properties") as String[];
+			val Map<String,String> propertiesMap = new HashMap();
 	
-		var i = -1;
-		while(i+2 < properties.length) {
-			val k = i + 1;
-			val v = i + 2;
-			i = i + 2;
-			propertiesMap.put( properties.get(k), properties.get(v))
-		}
-		println( "Service properties: " + propertiesMap)
+			var i = -1;
+			while(i+2 < properties.length) {
+				val k = i + 1;
+				val v = i + 2;
+				i = i + 2;
+				propertiesMap.put( properties.get(k), properties.get(v))
+			}
 		
-		new ServiceInfo(serviceName, referencedServices, providedServicesNames, propertiesMap)
+			new ServiceInfo(serviceName, referencedServices, providedServicesNames, propertiesMap)
+		
+		} catch ( Throwable t ) {
+			logMsgBuf.append("Error: " + t)
+			null
+		}
 	}
 	
 	private def Map<String,String> getBindMethodsMap( ClassDeclaration clazzDeclaration ) {

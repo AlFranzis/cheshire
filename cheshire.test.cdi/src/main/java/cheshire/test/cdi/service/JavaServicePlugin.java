@@ -6,17 +6,19 @@ import javax.inject.Inject;
 import al.franzis.cheshire.cdi.CDIModuleFramework;
 import al.franzis.cheshire.service.IServiceDefinition;
 import al.franzis.cheshire.service.Service;
+import al.franzis.cheshire.service.ServiceImplementation;
 
 @Service(
-	name="PluginA",
+	name="JavaServicePlugin",
 	providedServices={"cheshire.test.cdi.service.IPlugin"},
 	referencedServices={},
 	properties={"Prop1", "Value1", "Prop2", "Value2"}
 )
-public class PluginA implements IPlugin, IServiceDefinition {
+@ServiceImplementation
+public class JavaServicePlugin implements IPlugin, IServiceDefinition {
 	private CDIModuleFramework moduleFramework;
 
-	public PluginA() {
+	public JavaServicePlugin() {
 		System.out.println("PluginA created");
 	}
 	

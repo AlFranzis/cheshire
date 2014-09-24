@@ -28,7 +28,7 @@ public class CDIModuleTest {
 		IPluginManager pluginManager = moduleContext.getService(serviceRef);
 		List<IPlugin> plugins = pluginManager.getPlugins();
 		System.out.println("Plugins known to PluginManager: " + plugins);
-		Assert.assertEquals(2, plugins.size());
+		Assert.assertEquals(3, plugins.size());
 		
 		Assert.assertNotNull(ModuleActivatorExample.loadedResource);
 	}

@@ -1,5 +1,6 @@
 package al.franzis.cheshire.cdi;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -20,6 +22,7 @@ import al.franzis.cheshire.service.IServiceDefinition;
 import al.franzis.cheshire.service.IServiceReference;
 import al.franzis.cheshire.service.Service;
 import al.franzis.cheshire.service.ServiceActivationMethod;
+import al.franzis.cheshire.service.ServiceImplementation;
 
 @Singleton
 public class CDIServiceFactory {
@@ -36,7 +39,8 @@ public class CDIServiceFactory {
 	@PostConstruct
 	public void init() {
 		try {
-			Set<Bean<?>> serviceDefinitionBeans = beanManager.getBeans(IServiceDefinition.class);
+			Annotation serviceImplementationQualifier = new AnnotationLiteral<ServiceImplementation>() {};
+			Set<Bean<?>> serviceDefinitionBeans = beanManager.getBeans(IServiceDefinition.class, serviceImplementationQualifier);
 			for ( Bean<?> serviceDefinitionBean : serviceDefinitionBeans) {
 				ServiceInfo serviceInfo = parseServiceInfo(serviceDefinitionBean.getBeanClass());
 				ServiceProviderContainer<?> container = new ServiceProviderContainer<>(serviceInfo);
@@ -110,7 +114,7 @@ public class CDIServiceFactory {
 	}
 	
 	private <S> S createService( Class<S> serviceImpl ) {
-		Set<Bean<?>> serviceImplBeans = beanManager.getBeans(serviceImpl);
+		Set<Bean<?>> serviceImplBeans = beanManager.getBeans(serviceImpl, new AnnotationLiteral<ServiceImplementation>(){});
 		CreationalContext ctx = beanManager.createCreationalContext(null);
 		S serviceInstance = (S)serviceImplBeans.iterator().next().create(ctx);
 		return serviceInstance;
