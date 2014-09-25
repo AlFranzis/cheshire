@@ -3,6 +3,7 @@ package al.franzis.cheshire;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 import al.franzis.cheshire.cdi.DefaultEnvironmentMatcher;
 import al.franzis.cheshire.cdi.DefaultLibPathProvider;
+import al.franzis.cheshire.cdi.ICDIModuleManifest;
 
 /**
  * Processor of native library clauses in OSGi style:
@@ -41,17 +43,47 @@ public class NativeLibHandler {
 	}
 	
 	public String getModuleNativeLibs() throws Exception {
-		Set<File> libDirs = new HashSet<>();
+		Set<String> libDirs = new HashSet<>();
 		for (LibInfo lib : libs) {
 			if (envMatcher.matchesEnvironment(lib.getProperties())) {
 				for(String libPath : lib.getLibs()) {
 					File effectiveLibPath = getEffectivePath(libPath);
 					File libDir = effectiveLibPath.getParentFile();
-					libDirs.add(libDir);
+					libDirs.add(libDir.getPath());
 				}
 			}
 		}
 		
+		return toStringLiteral(libDirs);
+	}
+	
+	public static String effectiveNativeLibsPaths(ICDIModuleManifest moduleManifest, IRuntimeLibPathProvider runtimeLibPathProvider, String[] nativeLibPaths) {
+		Set<File> effectiveLibDirPaths = new HashSet<>();
+		for (String nativeLibPath : nativeLibPaths) {
+			File effectiveLibPath = runtimeLibPathProvider.getEffectivePath(moduleManifest, nativeLibPath);
+			effectiveLibDirPaths.add(effectiveLibPath);
+		}
+		return convertToLibraryString(effectiveLibDirPaths);
+	}
+	
+	private static String toStringLiteral( Collection<String> ss) {
+		StringBuffer buf = new StringBuffer();
+		buf.append("new String[] {");
+		boolean first = true;
+		for(String s : ss) {
+			if(!first)
+				buf.append(", ");
+			buf.append("\"");
+			buf.append(s);
+			buf.append("\"");
+			first = false;
+		}
+		
+		buf.append("}");
+		return buf.toString().replace("\\", "\\\\");
+	}
+	
+	private static String convertToLibraryString(Collection<File> libDirs) {
 		StringBuffer javaLibrariesString = new StringBuffer();
 		boolean first = true;
 		for ( File libDir : libDirs ) {
@@ -61,7 +93,6 @@ public class NativeLibHandler {
 			first = false;
 	    }
 		return javaLibrariesString.toString().replace("\\", "\\\\");
-		
 	}
 	
 	private File getEffectivePath(String libPath) {

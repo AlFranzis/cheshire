@@ -23,6 +23,20 @@ class ModuleProcessor extends AbstractClassProcessor {
 		val moduleManifestType = context.newTypeReference("al.franzis.cheshire.cdi.ICDIModuleManifest")
 		val implInterfaces = annotatedClass.implementedInterfaces + #[ moduleManifestType ]
 		annotatedClass.setImplementedInterfaces(implInterfaces)
+		
+		annotatedClass.addMethod("getBundleName") [
+			returnType = context.newTypeReference("java.lang.String")
+      		body = ['''
+      			return Bundle_Name;
+      		''']
+      	]
+		
+		val injectAnnotationType = context.newAnnotationReference("javax.inject.Inject")
+		val runtimeLibPathProviderType = context.newTypeReference("al.franzis.cheshire.IRuntimeLibPathProvider")
+		annotatedClass.addField("libPathProvider") [
+			addAnnotation(injectAnnotationType)
+    		type = runtimeLibPathProviderType
+      	]
       	
       	val nativeClauses = parseNativeClauses(annotatedClass)
 		val libHandler = new NativeLibHandler(nativeClauses);
@@ -33,8 +47,9 @@ class ModuleProcessor extends AbstractClassProcessor {
       	annotatedClass.addMethod("init") [
 			addAnnotation(postConstructAnnotationType)
       		body = ['''
-      			String nativeLibs = "«nativeLibs»";
-      			al.franzis.cheshire.NativeLibHandler.augmentJavaLibraryPath(nativeLibs);
+      			String[] nativeLibsPaths = «nativeLibs»;
+      			String effectiveNativeLibsPaths = al.franzis.cheshire.NativeLibHandler.effectiveNativeLibsPaths(this, libPathProvider, nativeLibsPaths);
+      			al.franzis.cheshire.NativeLibHandler.augmentJavaLibraryPath(effectiveNativeLibsPaths);
       		''']
       	]
 	}

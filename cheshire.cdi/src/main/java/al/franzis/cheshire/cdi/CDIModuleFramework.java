@@ -58,7 +58,9 @@ public class CDIModuleFramework {
 		System.out.println("Starting module framework");
 		Set<Bean<?>> manifestBeans = beanManager.getBeans(ICDIModuleManifest.class);
 		for(Bean<?> manifestBean : manifestBeans) {
-			createBeanInstance(manifestBean);
+			ICDIModuleManifest manifestInstance = (ICDIModuleManifest)createBeanInstance(manifestBean);
+			System.out.println("Created Module Manifest instance for module: " + manifestInstance.getBundleName());
+			
 		}
 		
 		Set<Bean<?>> activatorBeans = beanManager.getBeans(ICDIModuleActivator.class);
@@ -88,6 +90,7 @@ public class CDIModuleFramework {
 		try {
 			Method startMethod = Helpers.getAnnotatedMethod(activator.getClass(), ModuleStartMethod.class);
 			startMethod.invoke(activator);
+			System.out.println("Started Module Activator: " + activator.getClass().getCanonicalName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
