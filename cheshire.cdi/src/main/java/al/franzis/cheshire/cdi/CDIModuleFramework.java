@@ -55,6 +55,10 @@ public class CDIModuleFramework {
 		if ( !event.getClass().getName().equals("org.jboss.weld.environment.se.events.ContainerInitialized") )
 			return;
 		
+		start();
+	}
+	
+	public void start() {
 		System.out.println("Starting module framework");
 		Set<Bean<?>> manifestBeans = beanManager.getBeans(ICDIModuleManifest.class);
 		for(Bean<?> manifestBean : manifestBeans) {
