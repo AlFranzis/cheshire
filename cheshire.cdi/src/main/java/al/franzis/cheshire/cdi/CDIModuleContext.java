@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import al.franzis.cheshire.IModule;
 import al.franzis.cheshire.IModuleContext;
 import al.franzis.cheshire.service.IServiceReference;
@@ -40,7 +38,7 @@ public class CDIModuleContext implements IModuleContext {
 
 	@Override
 	public <S> Collection<IServiceReference<S>> getServiceReferences(Class<S> clazz) {
-		return null;
+		return serviceFactory.createOrGetServices(clazz);
 	}
 
 	@Override

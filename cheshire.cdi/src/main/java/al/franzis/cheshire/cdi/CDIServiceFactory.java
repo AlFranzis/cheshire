@@ -2,6 +2,7 @@ package al.franzis.cheshire.cdi;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -97,8 +98,30 @@ public class CDIServiceFactory {
 	}
 	
 	public <S> List<IServiceReference<S>> createOrGetServices( Class<S> serviceType ) {
+		List<ServiceProviderContainer<?>> serviceContainers = services.get(serviceType);
+		if ( serviceContainers == null || serviceContainers.isEmpty())
+			return null;
 		
-		return null;
+		List<IServiceReference<S>> refs = new ArrayList<>();
+		
+		for ( ServiceProviderContainer<?> _serviceContainer : serviceContainers ) {
+			CDIServiceReference<S> serviceInstance = null;
+			ServiceProviderContainer<S> serviceContainer = (ServiceProviderContainer<S>)_serviceContainer;
+			List<CDIServiceReference<S>> serviceInstances = serviceContainer.getServiceInstances();
+			if ( serviceInstances.isEmpty())
+			{
+				Class<S> serviceImpl = (Class<S>)serviceContainer.getImplementationClass();
+				/* when calling createService() the CDI container calls registerService() implicitly
+				 * to register the service instance
+				 */
+				createService(serviceImpl);
+			}
+			
+			serviceInstance = serviceInstances.get(0);
+			refs.add(serviceInstance);
+		}
+			
+		return refs;
 	}
 	
 	private ServiceProviderContainer getContainer(Class<?> serviceImplementation) {
