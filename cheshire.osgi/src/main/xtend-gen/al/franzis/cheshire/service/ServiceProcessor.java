@@ -3,6 +3,7 @@ package al.franzis.cheshire.service;
 import al.franzis.cheshire.service.PathHelper;
 import al.franzis.cheshire.service.ReferencedServiceInfo;
 import al.franzis.cheshire.service.Service;
+import al.franzis.cheshire.service.ServiceActivationMethod;
 import al.franzis.cheshire.service.ServiceBindMethod;
 import al.franzis.cheshire.service.ServiceInfo;
 import com.google.common.base.Objects;
@@ -41,26 +42,41 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 public class ServiceProcessor extends AbstractClassProcessor {
   public void doTransform(final MutableClassDeclaration annotatedClass, @Extension final TransformationContext context) {
     final TypeReference componentContextType = context.newTypeReference("org.osgi.service.component.ComponentContext");
-    final Procedure1<MutableMethodDeclaration> _function = new Procedure1<MutableMethodDeclaration>() {
-      public void apply(final MutableMethodDeclaration it) {
-        it.addParameter("componentContext", componentContextType);
-        final CompilationStrategy _function = new CompilationStrategy() {
-          public CharSequence compile(final CompilationStrategy.CompilationContext it) {
-            StringConcatenation _builder = new StringConcatenation();
-            _builder.append("al.franzis.cheshire.osgi.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.OSGiServiceContext(componentContext);");
-            _builder.newLine();
-            _builder.append("activate(osgiComponentContext);");
-            _builder.newLine();
-            return _builder;
+    final List<MethodDeclaration> activationMethods = this.findAnnotatedMethod(annotatedClass, ServiceActivationMethod.class);
+    boolean _isEmpty = activationMethods.isEmpty();
+    boolean _not = (!_isEmpty);
+    if (_not) {
+      int _size = activationMethods.size();
+      boolean _greaterThan = (_size > 1);
+      if (_greaterThan) {
+        InputOutput.<String>println("Multiple service activation methods!");
+      } else {
+        Iterator<MethodDeclaration> _iterator = activationMethods.iterator();
+        MethodDeclaration _next = _iterator.next();
+        final String activationMethodName = _next.getSimpleName();
+        final Procedure1<MutableMethodDeclaration> _function = new Procedure1<MutableMethodDeclaration>() {
+          public void apply(final MutableMethodDeclaration it) {
+            it.addParameter("componentContext", componentContextType);
+            final CompilationStrategy _function = new CompilationStrategy() {
+              public CharSequence compile(final CompilationStrategy.CompilationContext it) {
+                StringConcatenation _builder = new StringConcatenation();
+                _builder.append("al.franzis.cheshire.osgi.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.OSGiServiceContext(componentContext);");
+                _builder.newLine();
+                _builder.append(activationMethodName, "");
+                _builder.append("(osgiComponentContext);");
+                _builder.newLineIfNotEmpty();
+                return _builder;
+              }
+            };
+            it.setBody(_function);
           }
         };
-        it.setBody(_function);
+        annotatedClass.addMethod("activate", _function);
       }
-    };
-    annotatedClass.addMethod("activate", _function);
+    }
     boolean _isEclipseEnvironment = PathHelper.isEclipseEnvironment();
-    boolean _not = (!_isEclipseEnvironment);
-    if (_not) {
+    boolean _not_1 = (!_isEclipseEnvironment);
+    if (_not_1) {
       this.createOSGiServiceFile(context, null, context, annotatedClass);
     }
   }

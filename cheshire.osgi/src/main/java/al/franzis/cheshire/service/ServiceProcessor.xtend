@@ -48,13 +48,21 @@ class ServiceProcessor extends AbstractClassProcessor {
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
 		val componentContextType = context.newTypeReference("org.osgi.service.component.ComponentContext")
 	
-		annotatedClass.addMethod("activate") [
-      		addParameter( "componentContext", componentContextType )
-      		body = ['''
-      		al.franzis.cheshire.osgi.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.OSGiServiceContext(componentContext);
-      		activate(osgiComponentContext);
-      		''']
-      	]
+		val List<MethodDeclaration> activationMethods = findAnnotatedMethod(annotatedClass, ServiceActivationMethod);
+		if ( !activationMethods.empty ) {
+			if(activationMethods.size > 1) {
+				println("Multiple service activation methods!")
+			} else {
+				val activationMethodName = activationMethods.iterator.next.simpleName
+				annotatedClass.addMethod("activate") [
+      				addParameter( "componentContext", componentContextType )
+      				body = ['''
+      				al.franzis.cheshire.osgi.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.OSGiServiceContext(componentContext);
+      				«activationMethodName»(osgiComponentContext);
+      				''']
+	      		]
+	      	}
+      	}
       	
       	if(!PathHelper.eclipseEnvironment)
       		createOSGiServiceFile(context, null, context, annotatedClass)
