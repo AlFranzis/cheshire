@@ -40,7 +40,7 @@ public class OSGiModuleContext implements IModuleContext {
 
 	@Override
 	public <S> IServiceReference<S> getServiceReference(Class<S> clazz) {
-		ServiceReference<S> osgiServiceRef = bundleContext.getServiceReference(clazz);
+		ServiceReference osgiServiceRef = bundleContext.getServiceReference(clazz.getCanonicalName());
 		return new OSGiServiceReference<S>(osgiServiceRef);
 	}
 
@@ -48,7 +48,7 @@ public class OSGiModuleContext implements IModuleContext {
 	public <S> Collection<IServiceReference<S>> getServiceReferences(Class<S> clazz) {
 		try {
 			List<IServiceReference<S>> serviceReferences = new LinkedList<>();
-			for (ServiceReference<S> osgiServiceRef : bundleContext.getServiceReferences(clazz, null)) {
+			for (ServiceReference osgiServiceRef : bundleContext.getServiceReferences(clazz.getCanonicalName(), null)) {
 				IServiceReference<S> serviceRef = new OSGiServiceReference<>(osgiServiceRef);
 				serviceReferences.add(serviceRef);
 			}

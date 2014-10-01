@@ -12,6 +12,7 @@ import org.eclipse.xtend.lib.macro.CodeGenerationContext
 import java.lang.annotation.ElementType
 import java.util.List
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration
+import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy
 
 @Active(ModuleActivatorProcessor)
 @Target(ElementType.TYPE)
@@ -52,26 +53,50 @@ class ModuleActivatorProcessor extends AbstractClassProcessor {
 		
 		val osgiBundleContextType = context.newTypeReference( "org.osgi.framework.BundleContext" )
 		
-//		val overrideAnnotationType = context.findTypeGlobally("java.lang.Override")
-		
-		val moduleContextMethodName = findAnnotatedMethod(annotatedClass, ModuleContextMethod).simpleName
 		val startMethodName = findAnnotatedMethod(annotatedClass, ModuleStartMethod).simpleName
+		
+		var CompilationStrategy startMethodBody
+		val moduleContextMethod = findAnnotatedMethod(annotatedClass, ModuleContextMethod);
+		if (moduleContextMethod != null) {
+			val moduleContextMethodName = moduleContextMethod.simpleName
+			
+			startMethodBody =  ['''
+			try {
+      			«moduleContextMethodName»( al.franzis.cheshire.osgi.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );
+      			«startMethodName»();
+			} catch(Exception e) {
+				throw new RuntimeException("Exception while starting Activator", e);
+			}
+      		''']
+		} else {
+			startMethodBody =  ['''
+			try {
+      			«startMethodName»();
+			} catch(Exception e) {
+				throw new RuntimeException("Exception while starting Activator", e);
+			}
+      		''']
+		}
+		
+		val finalStartMethodBody = startMethodBody
+		
 		val stopMethodName = findAnnotatedMethod(annotatedClass, ModuleStopMethod).simpleName
 				
 		// add 'BundleActivator.start(BundleContext)' method
 		annotatedClass.addMethod("start") [
-//			addAnnotation(overrideAnnotationType)
       		addParameter( "bundleContext", osgiBundleContextType )
-      		body = ['''
-      		«moduleContextMethodName»( al.franzis.cheshire.osgi.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );
-      		«startMethodName»();
-      		''']
+      		body = finalStartMethodBody
       	]
       	// add 'BundleActivator.stop(BundleContext)' method
       	annotatedClass.addMethod("stop") [
       		addParameter( "bundleContext", osgiBundleContextType )
       		body = ['''
+      		try {
       		«stopMethodName»();
+      		} catch(Exception e) {
+      			throw new RuntimeException("Exception while stopping Activator", e);
+      		}
+      		
       		''']
 		]    
 	}

@@ -39,47 +39,95 @@ public class ModuleActivatorProcessor extends AbstractClassProcessor {
     final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(Lists.<TypeReference>newArrayList(osgiBundleActivatorType)));
     annotatedClass.setImplementedInterfaces(implInterfaces);
     final TypeReference osgiBundleContextType = context.newTypeReference("org.osgi.framework.BundleContext");
-    MutableMethodDeclaration _findAnnotatedMethod = this.findAnnotatedMethod(annotatedClass, ModuleContextMethod.class);
-    final String moduleContextMethodName = _findAnnotatedMethod.getSimpleName();
-    MutableMethodDeclaration _findAnnotatedMethod_1 = this.findAnnotatedMethod(annotatedClass, ModuleStartMethod.class);
-    final String startMethodName = _findAnnotatedMethod_1.getSimpleName();
-    MutableMethodDeclaration _findAnnotatedMethod_2 = this.findAnnotatedMethod(annotatedClass, ModuleStopMethod.class);
-    final String stopMethodName = _findAnnotatedMethod_2.getSimpleName();
-    final Procedure1<MutableMethodDeclaration> _function = new Procedure1<MutableMethodDeclaration>() {
+    MutableMethodDeclaration _findAnnotatedMethod = this.findAnnotatedMethod(annotatedClass, ModuleStartMethod.class);
+    final String startMethodName = _findAnnotatedMethod.getSimpleName();
+    CompilationStrategy startMethodBody = null;
+    final MutableMethodDeclaration moduleContextMethod = this.findAnnotatedMethod(annotatedClass, ModuleContextMethod.class);
+    boolean _notEquals = (!Objects.equal(moduleContextMethod, null));
+    if (_notEquals) {
+      final String moduleContextMethodName = moduleContextMethod.getSimpleName();
+      final CompilationStrategy _function = new CompilationStrategy() {
+        public CharSequence compile(final CompilationStrategy.CompilationContext it) {
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("try {");
+          _builder.newLine();
+          _builder.append("      \t\t\t");
+          _builder.append(moduleContextMethodName, "      \t\t\t");
+          _builder.append("( al.franzis.cheshire.osgi.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );");
+          _builder.newLineIfNotEmpty();
+          _builder.append("      \t\t\t");
+          _builder.append(startMethodName, "      \t\t\t");
+          _builder.append("();");
+          _builder.newLineIfNotEmpty();
+          _builder.append("} catch(Exception e) {");
+          _builder.newLine();
+          _builder.append("\t");
+          _builder.append("throw new RuntimeException(\"Exception while starting Activator\", e);");
+          _builder.newLine();
+          _builder.append("}");
+          _builder.newLine();
+          return _builder;
+        }
+      };
+      startMethodBody = _function;
+    } else {
+      final CompilationStrategy _function_1 = new CompilationStrategy() {
+        public CharSequence compile(final CompilationStrategy.CompilationContext it) {
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("try {");
+          _builder.newLine();
+          _builder.append("      \t\t\t");
+          _builder.append(startMethodName, "      \t\t\t");
+          _builder.append("();");
+          _builder.newLineIfNotEmpty();
+          _builder.append("} catch(Exception e) {");
+          _builder.newLine();
+          _builder.append("\t");
+          _builder.append("throw new RuntimeException(\"Exception while starting Activator\", e);");
+          _builder.newLine();
+          _builder.append("}");
+          _builder.newLine();
+          return _builder;
+        }
+      };
+      startMethodBody = _function_1;
+    }
+    final CompilationStrategy finalStartMethodBody = startMethodBody;
+    MutableMethodDeclaration _findAnnotatedMethod_1 = this.findAnnotatedMethod(annotatedClass, ModuleStopMethod.class);
+    final String stopMethodName = _findAnnotatedMethod_1.getSimpleName();
+    final Procedure1<MutableMethodDeclaration> _function_2 = new Procedure1<MutableMethodDeclaration>() {
       public void apply(final MutableMethodDeclaration it) {
         it.addParameter("bundleContext", osgiBundleContextType);
-        final CompilationStrategy _function = new CompilationStrategy() {
-          public CharSequence compile(final CompilationStrategy.CompilationContext it) {
-            StringConcatenation _builder = new StringConcatenation();
-            _builder.append(moduleContextMethodName, "");
-            _builder.append("( al.franzis.cheshire.osgi.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );");
-            _builder.newLineIfNotEmpty();
-            _builder.append(startMethodName, "");
-            _builder.append("();");
-            _builder.newLineIfNotEmpty();
-            return _builder;
-          }
-        };
-        it.setBody(_function);
+        it.setBody(finalStartMethodBody);
       }
     };
-    annotatedClass.addMethod("start", _function);
-    final Procedure1<MutableMethodDeclaration> _function_1 = new Procedure1<MutableMethodDeclaration>() {
+    annotatedClass.addMethod("start", _function_2);
+    final Procedure1<MutableMethodDeclaration> _function_3 = new Procedure1<MutableMethodDeclaration>() {
       public void apply(final MutableMethodDeclaration it) {
         it.addParameter("bundleContext", osgiBundleContextType);
         final CompilationStrategy _function = new CompilationStrategy() {
           public CharSequence compile(final CompilationStrategy.CompilationContext it) {
             StringConcatenation _builder = new StringConcatenation();
+            _builder.append("try {");
+            _builder.newLine();
             _builder.append(stopMethodName, "");
             _builder.append("();");
             _builder.newLineIfNotEmpty();
+            _builder.append("} catch(Exception e) {");
+            _builder.newLine();
+            _builder.append("\t");
+            _builder.append("throw new RuntimeException(\"Exception while stopping Activator\", e);");
+            _builder.newLine();
+            _builder.append("}");
+            _builder.newLine();
+            _builder.newLine();
             return _builder;
           }
         };
         it.setBody(_function);
       }
     };
-    annotatedClass.addMethod("stop", _function_1);
+    annotatedClass.addMethod("stop", _function_3);
   }
   
   private MutableMethodDeclaration findAnnotatedMethod(final MutableClassDeclaration annotatedClass, final Class<?> annotation) {

@@ -38,11 +38,20 @@ public class ModuleActivatorExample implements BundleActivator {
   }
   
   public void start(final BundleContext bundleContext) {
-    setModuleContext( al.franzis.cheshire.osgi.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );
-    start();
+    try {
+          			setModuleContext( al.franzis.cheshire.osgi.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );
+          			start();
+    } catch(Exception e) {
+    	throw new RuntimeException("Exception while starting Activator", e);
+    }
   }
   
   public void stop(final BundleContext bundleContext) {
+    try {
     stop();
+    } catch(Exception e) {
+    	throw new RuntimeException("Exception while stopping Activator", e);
+    }
+    
   }
 }
