@@ -1,8 +1,8 @@
 package al.franzis.cheshire.test.osgi.service;
 
-import al.franzis.cheshire.service.IServiceContext;
-import al.franzis.cheshire.service.Service;
-import al.franzis.cheshire.service.ServiceActivationMethod;
+import al.franzis.cheshire.api.service.IServiceContext;
+import al.franzis.cheshire.api.service.Service;
+import al.franzis.cheshire.api.service.ServiceActivationMethod;
 import al.franzis.cheshire.test.osgi.service.IPlugin;
 import java.util.Map;
 import org.eclipse.xtext.xbase.lib.InputOutput;
@@ -29,7 +29,7 @@ public class PluginA implements IPlugin {
   }
   
   public void activate(final ComponentContext componentContext) {
-    al.franzis.cheshire.osgi.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.OSGiServiceContext(componentContext);
+    al.franzis.cheshire.osgi.rt.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.rt.OSGiServiceContext(componentContext);
     activate(osgiComponentContext);
   }
 }

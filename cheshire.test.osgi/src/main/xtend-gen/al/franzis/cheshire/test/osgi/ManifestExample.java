@@ -1,8 +1,8 @@
 package al.franzis.cheshire.test.osgi;
 
-import al.franzis.cheshire.Module;
+import al.franzis.cheshire.api.ModuleManifest;
 
-@Module
+@ModuleManifest
 @SuppressWarnings("all")
 public class ManifestExample {
   public final static String Bundle_Name = "cheshire.test.osgi";

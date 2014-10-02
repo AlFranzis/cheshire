@@ -1,8 +1,8 @@
 package al.franzis.cheshire.test.osgi
 
-import al.franzis.cheshire.Module
+import al.franzis.cheshire.api.ModuleManifest
 
-@Module
+@ModuleManifest
 class ManifestExample {
 	public static val String Bundle_Name = "cheshire.test.osgi"
 	public static val String Bundle_Version = "0.0.1.qualifier"

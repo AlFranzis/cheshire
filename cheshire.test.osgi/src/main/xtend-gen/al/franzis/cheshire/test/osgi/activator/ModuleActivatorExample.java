@@ -1,11 +1,11 @@
 package al.franzis.cheshire.test.osgi.activator;
 
-import al.franzis.cheshire.IModule;
-import al.franzis.cheshire.IModuleContext;
-import al.franzis.cheshire.ModuleActivator;
-import al.franzis.cheshire.ModuleContextMethod;
-import al.franzis.cheshire.ModuleStartMethod;
-import al.franzis.cheshire.ModuleStopMethod;
+import al.franzis.cheshire.api.IModule;
+import al.franzis.cheshire.api.IModuleContext;
+import al.franzis.cheshire.api.ModuleActivator;
+import al.franzis.cheshire.api.ModuleContextMethod;
+import al.franzis.cheshire.api.ModuleStartMethod;
+import al.franzis.cheshire.api.ModuleStopMethod;
 import java.net.URL;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -39,7 +39,7 @@ public class ModuleActivatorExample implements BundleActivator {
   
   public void start(final BundleContext bundleContext) {
     try {
-          			setModuleContext( al.franzis.cheshire.osgi.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );
+          			setModuleContext( al.franzis.cheshire.osgi.rt.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );
           			start();
     } catch(Exception e) {
     	throw new RuntimeException("Exception while starting Activator", e);

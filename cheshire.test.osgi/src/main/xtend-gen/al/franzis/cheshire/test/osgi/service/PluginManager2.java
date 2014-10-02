@@ -1,9 +1,9 @@
 package al.franzis.cheshire.test.osgi.service;
 
-import al.franzis.cheshire.service.IServiceContext;
-import al.franzis.cheshire.service.Service;
-import al.franzis.cheshire.service.ServiceActivationMethod;
-import al.franzis.cheshire.service.ServiceBindMethod;
+import al.franzis.cheshire.api.service.IServiceContext;
+import al.franzis.cheshire.api.service.Service;
+import al.franzis.cheshire.api.service.ServiceActivationMethod;
+import al.franzis.cheshire.api.service.ServiceBindMethod;
 import al.franzis.cheshire.test.osgi.service.IPlugin;
 import al.franzis.cheshire.test.osgi.service.IPluginManager;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class PluginManager2 implements IPluginManager {
   }
   
   public void activate(final ComponentContext componentContext) {
-    al.franzis.cheshire.osgi.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.OSGiServiceContext(componentContext);
+    al.franzis.cheshire.osgi.rt.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.rt.OSGiServiceContext(componentContext);
     activate(osgiComponentContext);
   }
 }

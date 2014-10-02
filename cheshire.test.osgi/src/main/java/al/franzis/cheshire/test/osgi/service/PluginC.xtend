@@ -1,8 +1,8 @@
 package al.franzis.cheshire.test.osgi.service
 
-import al.franzis.cheshire.service.Service
-import al.franzis.cheshire.service.ServiceActivationMethod
-import al.franzis.cheshire.service.IServiceContext
+import al.franzis.cheshire.api.service.Service
+import al.franzis.cheshire.api.service.ServiceActivationMethod
+import al.franzis.cheshire.api.service.IServiceContext
 
 @Service(
 	name="PluginC",

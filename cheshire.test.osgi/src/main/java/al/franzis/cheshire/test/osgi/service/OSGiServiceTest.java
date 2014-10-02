@@ -5,8 +5,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import al.franzis.cheshire.IModuleContext;
-import al.franzis.cheshire.service.IServiceReference;
+import al.franzis.cheshire.api.IModuleContext;
+import al.franzis.cheshire.api.service.IServiceReference;
 import al.franzis.cheshire.test.osgi.activator.ModuleActivatorExample;
 
 public class OSGiServiceTest {
