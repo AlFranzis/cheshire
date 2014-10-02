@@ -57,12 +57,12 @@ public class CDIServiceFactory {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			new RuntimeException("Error while initializing CDI Service Factory", e);
 		}
 	}
 	
 	public void registerService(Object serviceInstance) {
-		System.out.println("Register service instance: " + serviceInstance);
+		RuntimeLogger.getInstance().info("Register service instance: " + serviceInstance);
 		
 		ServiceProviderContainer container = getContainer(serviceInstance.getClass());
 		CDIServiceReference<?> serviceRef = new CDIServiceReference(serviceInstance);
@@ -176,7 +176,7 @@ public class CDIServiceFactory {
 			try {
 				activationMethod.invoke(serviceInstance, serviceContext);
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new RuntimeException("Error while calling service activation method", e);
 			}
 		}
 	}

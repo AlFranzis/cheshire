@@ -11,7 +11,7 @@ import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import al.franzis.cheshire.osgi.proc.Logger
 
 class ModuleManifestProcessor extends AbstractClassProcessor {
-	Logger logger
+	var Logger logger
 
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
 	}

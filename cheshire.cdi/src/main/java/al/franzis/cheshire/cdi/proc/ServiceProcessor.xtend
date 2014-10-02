@@ -17,21 +17,21 @@ class ServiceProcessor extends AbstractClassProcessor {
 	val StringBuffer logMsgBuf = new StringBuffer;
 	
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-		val serviceDefinitionType = context.newTypeReference("al.franzis.cheshire.api.service.IServiceDefinition")
+		val serviceDefinitionType = context.newTypeReference(Helpers.CLASSNAME_ISERVICEDEFINITION)
 		val implInterfaces = annotatedClass.implementedInterfaces + #[ serviceDefinitionType ]
 		annotatedClass.setImplementedInterfaces(implInterfaces)
 		
 		val serviceImplementationAnnotationType = context.newAnnotationReference(ServiceImplementation)
 		annotatedClass.addAnnotation(serviceImplementationAnnotationType)
 		
-		val cdiModuleFrameworkType = context.newTypeReference("al.franzis.cheshire.cdi.rt.CDIModuleFramework")
+		val cdiModuleFrameworkType = context.newTypeReference(Helpers.CLASSNAME_CDIMODULEFRAMEWORK)
 		
 		annotatedClass.addField("moduleFramework") [
     		type = cdiModuleFrameworkType
       	]
 		
-//		val injectAnnotationType = context.findTypeGlobally("javax.inject.Inject")
-		val injectAnnotationType = context.newAnnotationReference("javax.inject.Inject")
+//		val injectAnnotationType = context.findTypeGlobally(Helpers.CLASSNAME_INJECT)
+		val injectAnnotationType = context.newAnnotationReference(Helpers.CLASSNAME_INJECT)
 		
 		annotatedClass.addMethod("setModuleFramework") [
 			addAnnotation(injectAnnotationType)
@@ -41,8 +41,8 @@ class ServiceProcessor extends AbstractClassProcessor {
       		''']
       	]
       	
-//      	val postConstructAnnotationType = context.findTypeGlobally("javax.annotation.PostConstruct")
-      	val postConstructAnnotationType = context.newAnnotationReference("javax.annotation.PostConstruct")
+//      	val postConstructAnnotationType = context.findTypeGlobally(Helpers.CLASSNAME_POSTCONSTRUCT)
+      	val postConstructAnnotationType = context.newAnnotationReference(Helpers.CLASSNAME_POSTCONSTRUCT)
       	
       	annotatedClass.addMethod("init") [
 			addAnnotation(postConstructAnnotationType)
@@ -61,7 +61,7 @@ class ServiceProcessor extends AbstractClassProcessor {
       		if ( instancesParameterType == null )
       			logMsgBuf.append( "WARN: Referenced service type name not found!\n" )
       		
-      		val instancesType = context.newTypeReference("javax.enterprise.inject.Instance", instancesParameterType)
+      		val instancesType = context.newTypeReference(Helpers.CLASSNAME_INSTANCE, instancesParameterType)
       		
       		val bindMethodName = referencedService.bindMethodName
       		
@@ -70,9 +70,9 @@ class ServiceProcessor extends AbstractClassProcessor {
 				addParameter( "instances", instancesType ).addAnnotation(serviceImplementationAnnotationType)
       			body = ['''
       				java.util.Iterator<«refServiceTypeName»> it = instances.iterator();
-					while(it.hasNext()) {
+      				while(it.hasNext()) {
 						«bindMethodName»(it.next());
-					}
+      				}
       			''']
       		]
       		i = i + 1	
@@ -123,15 +123,10 @@ class ServiceProcessor extends AbstractClassProcessor {
 	
 	private def Map<String,String> getBindMethodsMap( ClassDeclaration clazzDeclaration ) {
 		val Map<String,String> bindMethodsMap = new HashMap();
-		for(MethodDeclaration method : findAnnotatedMethod(clazzDeclaration, ServiceBindMethod)) {
+		for(MethodDeclaration method : Helpers.findAnnotatedMethod(clazzDeclaration, ServiceBindMethod)) {
 			bindMethodsMap.put(method.parameters.iterator().next.type.name, method.simpleName)
 		}
 		bindMethodsMap
-	}
-	
-	private def List<MethodDeclaration> findAnnotatedMethod( ClassDeclaration annotatedClass, Class<?> annotation ) {
-		val List<? extends MethodDeclaration> annotatedMethods = annotatedClass.declaredMethods.filter([m | m.annotations.exists( [ a|a.annotationTypeDeclaration.simpleName == annotation.simpleName])]).toList
-		annotatedMethods as List<MethodDeclaration>
 	}
 	
 }

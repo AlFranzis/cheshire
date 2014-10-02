@@ -16,6 +16,8 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 @SuppressWarnings("all")
 public class Logger {
+  private static boolean ENABLED = false;
+  
   private Path loggerFile;
   
   @Extension
@@ -39,6 +41,9 @@ public class Logger {
   }
   
   public void info(final String msg) {
+    if ((!Logger.ENABLED)) {
+      return;
+    }
     String _readExistingFile = this.readExistingFile();
     final StringBuffer buf = new StringBuffer(_readExistingFile);
     buf.append("\n");
@@ -48,6 +53,9 @@ public class Logger {
   }
   
   public void error(final String msg, final Throwable t) {
+    if ((!Logger.ENABLED)) {
+      return;
+    }
     String _readExistingFile = this.readExistingFile();
     final StringBuffer buf = new StringBuffer(_readExistingFile);
     buf.append("\n");

@@ -3,6 +3,8 @@ package al.franzis.cheshire.osgi.proc;
 import al.franzis.cheshire.api.service.Service;
 import al.franzis.cheshire.api.service.ServiceActivationMethod;
 import al.franzis.cheshire.api.service.ServiceBindMethod;
+import al.franzis.cheshire.osgi.proc.Helpers;
+import al.franzis.cheshire.osgi.proc.Logger;
 import al.franzis.cheshire.osgi.proc.PathHelper;
 import al.franzis.cheshire.osgi.proc.ReferencedServiceInfo;
 import al.franzis.cheshire.osgi.proc.ServiceInfo;
@@ -40,8 +42,10 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
 public class ServiceProcessor extends AbstractClassProcessor {
+  private final StringBuffer logMsgBuf = new StringBuffer();
+  
   public void doTransform(final MutableClassDeclaration annotatedClass, @Extension final TransformationContext context) {
-    final TypeReference componentContextType = context.newTypeReference("org.osgi.service.component.ComponentContext");
+    final TypeReference componentContextType = context.newTypeReference(Helpers.CLASSNAME_COMPONENTCONTEXT);
     final List<MethodDeclaration> activationMethods = this.findAnnotatedMethod(annotatedClass, ServiceActivationMethod.class);
     boolean _isEmpty = activationMethods.isEmpty();
     boolean _not = (!_isEmpty);
@@ -49,7 +53,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
       int _size = activationMethods.size();
       boolean _greaterThan = (_size > 1);
       if (_greaterThan) {
-        InputOutput.<String>println("Multiple service activation methods!");
+        this.logMsgBuf.append("ERROR: Multiple service activation methods!");
       } else {
         Iterator<MethodDeclaration> _iterator = activationMethods.iterator();
         MethodDeclaration _next = _iterator.next();
@@ -60,8 +64,11 @@ public class ServiceProcessor extends AbstractClassProcessor {
             final CompilationStrategy _function = new CompilationStrategy() {
               public CharSequence compile(final CompilationStrategy.CompilationContext it) {
                 StringConcatenation _builder = new StringConcatenation();
-                _builder.append("al.franzis.cheshire.osgi.rt.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.rt.OSGiServiceContext(componentContext);");
-                _builder.newLine();
+                _builder.append(Helpers.CLASSNAME_OSGISERVICECONTEXT, "");
+                _builder.append(" osgiComponentContext = new ");
+                _builder.append(Helpers.CLASSNAME_OSGISERVICECONTEXT, "");
+                _builder.append("(componentContext);");
+                _builder.newLineIfNotEmpty();
                 _builder.append(activationMethodName, "");
                 _builder.append("(osgiComponentContext);");
                 _builder.newLineIfNotEmpty();
@@ -86,6 +93,9 @@ public class ServiceProcessor extends AbstractClassProcessor {
     if (_isEclipseEnvironment) {
       this.createOSGiServiceFile(context, context, context, annotatedClass);
     }
+    final Logger logger = Logger.getLogger(annotatedClass, context);
+    String _string = this.logMsgBuf.toString();
+    logger.info(_string);
   }
   
   private void createOSGiServiceFile(final FileLocations fl, @Extension final MutableFileSystemSupport mfss, @Extension final FileSystemSupport fs, final ClassDeclaration serviceClass) {

@@ -28,8 +28,8 @@ public class ReferencedServiceInfo {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((_name== null) ? 0 : _name.hashCode());
-    result = prime * result + ((_bindMethodName== null) ? 0 : _bindMethodName.hashCode());
+    result = prime * result + ((this._name== null) ? 0 : this._name.hashCode());
+    result = prime * result + ((this._bindMethodName== null) ? 0 : this._bindMethodName.hashCode());
     return result;
   }
   
@@ -42,15 +42,15 @@ public class ReferencedServiceInfo {
     if (getClass() != obj.getClass())
       return false;
     ReferencedServiceInfo other = (ReferencedServiceInfo) obj;
-    if (_name == null) {
+    if (this._name == null) {
       if (other._name != null)
         return false;
-    } else if (!_name.equals(other._name))
+    } else if (!this._name.equals(other._name))
       return false;
-    if (_bindMethodName == null) {
+    if (this._bindMethodName == null) {
       if (other._bindMethodName != null)
         return false;
-    } else if (!_bindMethodName.equals(other._bindMethodName))
+    } else if (!this._bindMethodName.equals(other._bindMethodName))
       return false;
     return true;
   }

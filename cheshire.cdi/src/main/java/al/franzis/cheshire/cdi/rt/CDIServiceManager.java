@@ -8,6 +8,6 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 public class CDIServiceManager implements Extension {
 
 	public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat, BeanManager beanManager) {
-		System.out.println(pat);
+		RuntimeLogger.getInstance().info(pat.toString());
 	}
 }

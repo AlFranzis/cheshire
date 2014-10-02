@@ -24,11 +24,11 @@ class ModuleActivatorProcessor extends AbstractClassProcessor {
 	
 	def void turnIntoOSGiActivator(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
 		// add BundleActivator to implemented interfaces
-		val osgiBundleActivatorType = context.newTypeReference("org.osgi.framework.BundleActivator")
+		val osgiBundleActivatorType = context.newTypeReference(Helpers.CLASSNAME_BUNDLEACTIVATOR)
 		val implInterfaces = annotatedClass.implementedInterfaces + #[ osgiBundleActivatorType ]
 		annotatedClass.setImplementedInterfaces(implInterfaces)
 		
-		val osgiBundleContextType = context.newTypeReference( "org.osgi.framework.BundleContext" )
+		val osgiBundleContextType = context.newTypeReference(Helpers.ClASSNAME_BUNDLECONTEXT)
 		
 		val startMethodName = findAnnotatedMethod(annotatedClass, ModuleStartMethod).simpleName
 		
@@ -39,7 +39,7 @@ class ModuleActivatorProcessor extends AbstractClassProcessor {
 			
 			startMethodBody =  ['''
 			try {
-      			«moduleContextMethodName»( al.franzis.cheshire.osgi.rt.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );
+      			«moduleContextMethodName»( «Helpers.CLASSNAME_OSGIMODULEFRAMEWORK».getInstance().getOrCreateModule( bundleContext ).getModuleContext() );
       			«startMethodName»();
 			} catch(Exception e) {
 				throw new RuntimeException("Exception while starting Activator", e);

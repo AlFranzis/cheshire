@@ -9,13 +9,13 @@ import al.franzis.cheshire.api.IModuleContext;
 import al.franzis.cheshire.api.service.IServiceReference;
 
 public class CDIModuleContext implements IModuleContext {
-	private final CDIModuleFramework moduleFramework;
+//	private final CDIModuleFramework moduleFramework;
 	private final IModule cdiModule = new CDIModule();
 	
 	private CDIServiceFactory serviceFactory;
 	
 	public CDIModuleContext(CDIModuleFramework moduleFramework) {
-		this.moduleFramework = moduleFramework;
+//		this.moduleFramework = moduleFramework;
 		this.serviceFactory = moduleFramework.getServiceFactory();
 	}
 	

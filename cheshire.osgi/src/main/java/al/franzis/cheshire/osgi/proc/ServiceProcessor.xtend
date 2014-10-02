@@ -17,20 +17,21 @@ import org.eclipse.xtend.lib.macro.file.MutableFileSystemSupport
 import al.franzis.cheshire.api.service.Service
 
 class ServiceProcessor extends AbstractClassProcessor {
+	val StringBuffer logMsgBuf = new StringBuffer;
 	
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-		val componentContextType = context.newTypeReference("org.osgi.service.component.ComponentContext")
+		val componentContextType = context.newTypeReference(Helpers.CLASSNAME_COMPONENTCONTEXT)
 	
 		val List<MethodDeclaration> activationMethods = findAnnotatedMethod(annotatedClass, ServiceActivationMethod);
 		if ( !activationMethods.empty ) {
 			if(activationMethods.size > 1) {
-				println("Multiple service activation methods!")
+				logMsgBuf.append("ERROR: Multiple service activation methods!")
 			} else {
 				val activationMethodName = activationMethods.iterator.next.simpleName
 				annotatedClass.addMethod("activate") [
       				addParameter( "componentContext", componentContextType )
       				body = ['''
-      				al.franzis.cheshire.osgi.rt.OSGiServiceContext osgiComponentContext = new al.franzis.cheshire.osgi.rt.OSGiServiceContext(componentContext);
+      				«Helpers.CLASSNAME_OSGISERVICECONTEXT» osgiComponentContext = new «Helpers.CLASSNAME_OSGISERVICECONTEXT»(componentContext);
       				«activationMethodName»(osgiComponentContext);
       				''']
 	      		]
@@ -44,6 +45,9 @@ class ServiceProcessor extends AbstractClassProcessor {
 	override doGenerateCode(ClassDeclaration annotatedClass, extension CodeGenerationContext context) {
 		if(PathHelper.eclipseEnvironment)
 			createOSGiServiceFile(context, context, context, annotatedClass)
+			
+		val logger = Logger.getLogger( annotatedClass, context)
+		logger.info(logMsgBuf.toString)		  	
 	}
 	
 	private def void createOSGiServiceFile(FileLocations fl, extension MutableFileSystemSupport mfss, extension FileSystemSupport fs,
@@ -76,8 +80,6 @@ class ServiceProcessor extends AbstractClassProcessor {
 			</scr:component>
 		''');
 	}
-	
-	
 	
 	private def ServiceInfo parseServiceDefinition(ClassDeclaration annotatedClass, Class<?> annotation) {
 		val serviceAnnotation = annotatedClass.annotations.findFirst( [ a | a.annotationTypeDeclaration.simpleName == annotation.simpleName ] ) 

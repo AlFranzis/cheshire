@@ -1,5 +1,6 @@
 package al.franzis.cheshire.cdi.proc;
 
+import al.franzis.cheshire.cdi.proc.Helpers;
 import al.franzis.cheshire.cdi.rt.NativeLibHandler;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -25,13 +26,13 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 public class ModuleManifestProcessor extends AbstractClassProcessor {
   public void doTransform(final MutableClassDeclaration annotatedClass, @Extension final TransformationContext context) {
     try {
-      final TypeReference moduleManifestType = context.newTypeReference("al.franzis.cheshire.cdi.rt.ICDIModuleManifest");
+      final TypeReference moduleManifestType = context.newTypeReference(Helpers.CLASSNAME_ICDIModuleManifest);
       Iterable<? extends TypeReference> _implementedInterfaces = annotatedClass.getImplementedInterfaces();
       final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(Lists.<TypeReference>newArrayList(moduleManifestType)));
       annotatedClass.setImplementedInterfaces(implInterfaces);
       final Procedure1<MutableMethodDeclaration> _function = new Procedure1<MutableMethodDeclaration>() {
         public void apply(final MutableMethodDeclaration it) {
-          TypeReference _newTypeReference = context.newTypeReference("java.lang.String");
+          TypeReference _newTypeReference = context.newTypeReference(Helpers.CLASSNAME_STRING);
           it.setReturnType(_newTypeReference);
           final CompilationStrategy _function = new CompilationStrategy() {
             public CharSequence compile(final CompilationStrategy.CompilationContext it) {
@@ -45,8 +46,8 @@ public class ModuleManifestProcessor extends AbstractClassProcessor {
         }
       };
       annotatedClass.addMethod("getBundleName", _function);
-      final AnnotationReference injectAnnotationType = context.newAnnotationReference("javax.inject.Inject");
-      final TypeReference runtimeLibPathProviderType = context.newTypeReference("al.franzis.cheshire.api.nativecode.IRuntimeLibPathProvider");
+      final AnnotationReference injectAnnotationType = context.newAnnotationReference(Helpers.CLASSNAME_INJECT);
+      final TypeReference runtimeLibPathProviderType = context.newTypeReference(Helpers.ClASSNAME_IRuntimeLibPathProvider);
       final Procedure1<MutableFieldDeclaration> _function_1 = new Procedure1<MutableFieldDeclaration>() {
         public void apply(final MutableFieldDeclaration it) {
           it.addAnnotation(injectAnnotationType);
@@ -57,7 +58,7 @@ public class ModuleManifestProcessor extends AbstractClassProcessor {
       final String nativeClauses = this.parseNativeClauses(annotatedClass);
       final NativeLibHandler libHandler = new NativeLibHandler(nativeClauses);
       final String nativeLibs = libHandler.getModuleNativeLibs();
-      final AnnotationReference postConstructAnnotationType = context.newAnnotationReference("javax.annotation.PostConstruct");
+      final AnnotationReference postConstructAnnotationType = context.newAnnotationReference(Helpers.CLASSNAME_POSTCONSTRUCT);
       final Procedure1<MutableMethodDeclaration> _function_2 = new Procedure1<MutableMethodDeclaration>() {
         public void apply(final MutableMethodDeclaration it) {
           it.addAnnotation(postConstructAnnotationType);
@@ -68,10 +69,13 @@ public class ModuleManifestProcessor extends AbstractClassProcessor {
               _builder.append(nativeLibs, "");
               _builder.append(";");
               _builder.newLineIfNotEmpty();
-              _builder.append("String effectiveNativeLibsPaths = al.franzis.cheshire.cdi.rt.NativeLibHandler.effectiveNativeLibsPaths(this, libPathProvider, nativeLibsPaths);");
-              _builder.newLine();
-              _builder.append("al.franzis.cheshire.cdi.rt.NativeLibHandler.augmentJavaLibraryPath(effectiveNativeLibsPaths);");
-              _builder.newLine();
+              _builder.append("String effectiveNativeLibsPaths = ");
+              _builder.append(Helpers.CLASSNAME_NATIVELIBHANDLER, "");
+              _builder.append(".effectiveNativeLibsPaths(this, libPathProvider, nativeLibsPaths);");
+              _builder.newLineIfNotEmpty();
+              _builder.append(Helpers.CLASSNAME_NATIVELIBHANDLER, "");
+              _builder.append(".augmentJavaLibraryPath(effectiveNativeLibsPaths);");
+              _builder.newLineIfNotEmpty();
               return _builder;
             }
           };

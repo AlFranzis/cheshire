@@ -2,6 +2,7 @@ package al.franzis.cheshire.cdi.proc;
 
 import al.franzis.cheshire.api.service.Service;
 import al.franzis.cheshire.api.service.ServiceBindMethod;
+import al.franzis.cheshire.cdi.proc.Helpers;
 import al.franzis.cheshire.cdi.proc.Logger;
 import al.franzis.cheshire.cdi.proc.ReferencedServiceInfo;
 import al.franzis.cheshire.cdi.proc.ServiceInfo;
@@ -42,20 +43,20 @@ public class ServiceProcessor extends AbstractClassProcessor {
   private final StringBuffer logMsgBuf = new StringBuffer();
   
   public void doTransform(final MutableClassDeclaration annotatedClass, @Extension final TransformationContext context) {
-    final TypeReference serviceDefinitionType = context.newTypeReference("al.franzis.cheshire.api.service.IServiceDefinition");
+    final TypeReference serviceDefinitionType = context.newTypeReference(Helpers.CLASSNAME_ISERVICEDEFINITION);
     Iterable<? extends TypeReference> _implementedInterfaces = annotatedClass.getImplementedInterfaces();
     final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(Lists.<TypeReference>newArrayList(serviceDefinitionType)));
     annotatedClass.setImplementedInterfaces(implInterfaces);
     final AnnotationReference serviceImplementationAnnotationType = context.newAnnotationReference(ServiceImplementation.class);
     annotatedClass.addAnnotation(serviceImplementationAnnotationType);
-    final TypeReference cdiModuleFrameworkType = context.newTypeReference("al.franzis.cheshire.cdi.rt.CDIModuleFramework");
+    final TypeReference cdiModuleFrameworkType = context.newTypeReference(Helpers.CLASSNAME_CDIMODULEFRAMEWORK);
     final Procedure1<MutableFieldDeclaration> _function = new Procedure1<MutableFieldDeclaration>() {
       public void apply(final MutableFieldDeclaration it) {
         it.setType(cdiModuleFrameworkType);
       }
     };
     annotatedClass.addField("moduleFramework", _function);
-    final AnnotationReference injectAnnotationType = context.newAnnotationReference("javax.inject.Inject");
+    final AnnotationReference injectAnnotationType = context.newAnnotationReference(Helpers.CLASSNAME_INJECT);
     final Procedure1<MutableMethodDeclaration> _function_1 = new Procedure1<MutableMethodDeclaration>() {
       public void apply(final MutableMethodDeclaration it) {
         it.addAnnotation(injectAnnotationType);
@@ -72,7 +73,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
       }
     };
     annotatedClass.addMethod("setModuleFramework", _function_1);
-    final AnnotationReference postConstructAnnotationType = context.newAnnotationReference("javax.annotation.PostConstruct");
+    final AnnotationReference postConstructAnnotationType = context.newAnnotationReference(Helpers.CLASSNAME_POSTCONSTRUCT);
     final Procedure1<MutableMethodDeclaration> _function_2 = new Procedure1<MutableMethodDeclaration>() {
       public void apply(final MutableMethodDeclaration it) {
         it.addAnnotation(postConstructAnnotationType);
@@ -99,7 +100,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
         if (_equals) {
           this.logMsgBuf.append("WARN: Referenced service type name not found!\n");
         }
-        final TypeReference instancesType = context.newTypeReference("javax.enterprise.inject.Instance", instancesParameterType);
+        final TypeReference instancesType = context.newTypeReference(Helpers.CLASSNAME_INSTANCE, instancesParameterType);
         final String bindMethodName = referencedService.getBindMethodName();
         final Procedure1<MutableMethodDeclaration> _function_3 = new Procedure1<MutableMethodDeclaration>() {
           public void apply(final MutableMethodDeclaration it) {
@@ -113,14 +114,12 @@ public class ServiceProcessor extends AbstractClassProcessor {
                 _builder.append(refServiceTypeName, "");
                 _builder.append("> it = instances.iterator();");
                 _builder.newLineIfNotEmpty();
-                _builder.append("\t\t\t\t\t");
                 _builder.append("while(it.hasNext()) {");
                 _builder.newLine();
                 _builder.append("\t\t\t\t\t\t");
                 _builder.append(bindMethodName, "\t\t\t\t\t\t");
                 _builder.append("(it.next());");
                 _builder.newLineIfNotEmpty();
-                _builder.append("\t\t\t\t\t");
                 _builder.append("}");
                 _builder.newLine();
                 return _builder;
@@ -221,7 +220,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
     Map<String, String> _xblockexpression = null;
     {
       final Map<String, String> bindMethodsMap = new HashMap<String, String>();
-      List<MethodDeclaration> _findAnnotatedMethod = this.findAnnotatedMethod(clazzDeclaration, ServiceBindMethod.class);
+      List<MethodDeclaration> _findAnnotatedMethod = Helpers.findAnnotatedMethod(clazzDeclaration, ServiceBindMethod.class);
       for (final MethodDeclaration method : _findAnnotatedMethod) {
         Iterable<? extends ParameterDeclaration> _parameters = method.getParameters();
         Iterator<? extends ParameterDeclaration> _iterator = _parameters.iterator();
@@ -232,31 +231,6 @@ public class ServiceProcessor extends AbstractClassProcessor {
         bindMethodsMap.put(_name, _simpleName);
       }
       _xblockexpression = bindMethodsMap;
-    }
-    return _xblockexpression;
-  }
-  
-  private List<MethodDeclaration> findAnnotatedMethod(final ClassDeclaration annotatedClass, final Class<?> annotation) {
-    List<MethodDeclaration> _xblockexpression = null;
-    {
-      Iterable<? extends MethodDeclaration> _declaredMethods = annotatedClass.getDeclaredMethods();
-      final Function1<MethodDeclaration, Boolean> _function = new Function1<MethodDeclaration, Boolean>() {
-        public Boolean apply(final MethodDeclaration m) {
-          Iterable<? extends AnnotationReference> _annotations = m.getAnnotations();
-          final Function1<AnnotationReference, Boolean> _function = new Function1<AnnotationReference, Boolean>() {
-            public Boolean apply(final AnnotationReference a) {
-              AnnotationTypeDeclaration _annotationTypeDeclaration = a.getAnnotationTypeDeclaration();
-              String _simpleName = _annotationTypeDeclaration.getSimpleName();
-              String _simpleName_1 = annotation.getSimpleName();
-              return Boolean.valueOf(Objects.equal(_simpleName, _simpleName_1));
-            }
-          };
-          return Boolean.valueOf(IterableExtensions.exists(_annotations, _function));
-        }
-      };
-      Iterable<? extends MethodDeclaration> _filter = IterableExtensions.filter(_declaredMethods, _function);
-      final List<? extends MethodDeclaration> annotatedMethods = IterableExtensions.toList(_filter);
-      _xblockexpression = ((List<MethodDeclaration>) annotatedMethods);
     }
     return _xblockexpression;
   }

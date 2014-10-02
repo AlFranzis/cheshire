@@ -3,6 +3,7 @@ package al.franzis.cheshire.osgi.proc;
 import al.franzis.cheshire.api.ModuleContextMethod;
 import al.franzis.cheshire.api.ModuleStartMethod;
 import al.franzis.cheshire.api.ModuleStopMethod;
+import al.franzis.cheshire.osgi.proc.Helpers;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -34,11 +35,11 @@ public class ModuleActivatorProcessor extends AbstractClassProcessor {
   }
   
   public void turnIntoOSGiActivator(final MutableClassDeclaration annotatedClass, @Extension final TransformationContext context) {
-    final TypeReference osgiBundleActivatorType = context.newTypeReference("org.osgi.framework.BundleActivator");
+    final TypeReference osgiBundleActivatorType = context.newTypeReference(Helpers.CLASSNAME_BUNDLEACTIVATOR);
     Iterable<? extends TypeReference> _implementedInterfaces = annotatedClass.getImplementedInterfaces();
     final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(Lists.<TypeReference>newArrayList(osgiBundleActivatorType)));
     annotatedClass.setImplementedInterfaces(implInterfaces);
-    final TypeReference osgiBundleContextType = context.newTypeReference("org.osgi.framework.BundleContext");
+    final TypeReference osgiBundleContextType = context.newTypeReference(Helpers.ClASSNAME_BUNDLECONTEXT);
     MutableMethodDeclaration _findAnnotatedMethod = this.findAnnotatedMethod(annotatedClass, ModuleStartMethod.class);
     final String startMethodName = _findAnnotatedMethod.getSimpleName();
     CompilationStrategy startMethodBody = null;
@@ -53,7 +54,9 @@ public class ModuleActivatorProcessor extends AbstractClassProcessor {
           _builder.newLine();
           _builder.append("      \t\t\t");
           _builder.append(moduleContextMethodName, "      \t\t\t");
-          _builder.append("( al.franzis.cheshire.osgi.rt.OSGiModuleFramework.getInstance().getOrCreateModule( bundleContext ).getModuleContext() );");
+          _builder.append("( ");
+          _builder.append(Helpers.CLASSNAME_OSGIMODULEFRAMEWORK, "      \t\t\t");
+          _builder.append(".getInstance().getOrCreateModule( bundleContext ).getModuleContext() );");
           _builder.newLineIfNotEmpty();
           _builder.append("      \t\t\t");
           _builder.append(startMethodName, "      \t\t\t");

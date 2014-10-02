@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
 class Logger {
+	static boolean ENABLED = false
 	Path loggerFile
 	extension MutableFileSystemSupport cxt
 	
@@ -27,6 +28,8 @@ class Logger {
 	}
 	
 	def info(String msg) {
+		if (!ENABLED) return;
+			
 		val StringBuffer buf = new StringBuffer(readExistingFile())
 		buf.append("\n")
 		buf.append(msg)
@@ -34,6 +37,7 @@ class Logger {
 	}
 	
 	def error(String msg, Throwable t) {
+		if (!ENABLED) return;
 		
 		val StringBuffer buf = new StringBuffer(readExistingFile())
 		buf.append("\n")

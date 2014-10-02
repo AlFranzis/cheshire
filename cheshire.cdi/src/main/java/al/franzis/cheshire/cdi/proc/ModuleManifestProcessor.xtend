@@ -10,19 +10,19 @@ import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 class ModuleManifestProcessor extends AbstractClassProcessor {
 
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-		val moduleManifestType = context.newTypeReference("al.franzis.cheshire.cdi.rt.ICDIModuleManifest")
+		val moduleManifestType = context.newTypeReference(Helpers.CLASSNAME_ICDIModuleManifest)
 		val implInterfaces = annotatedClass.implementedInterfaces + #[ moduleManifestType ]
 		annotatedClass.setImplementedInterfaces(implInterfaces)
 		
 		annotatedClass.addMethod("getBundleName") [
-			returnType = context.newTypeReference("java.lang.String")
+			returnType = context.newTypeReference(Helpers.CLASSNAME_STRING)
       		body = ['''
       			return Bundle_Name;
       		''']
       	]
 		
-		val injectAnnotationType = context.newAnnotationReference("javax.inject.Inject")
-		val runtimeLibPathProviderType = context.newTypeReference("al.franzis.cheshire.api.nativecode.IRuntimeLibPathProvider")
+		val injectAnnotationType = context.newAnnotationReference(Helpers.CLASSNAME_INJECT)
+		val runtimeLibPathProviderType = context.newTypeReference(Helpers.ClASSNAME_IRuntimeLibPathProvider)
 		annotatedClass.addField("libPathProvider") [
 			addAnnotation(injectAnnotationType)
     		type = runtimeLibPathProviderType
@@ -32,20 +32,19 @@ class ModuleManifestProcessor extends AbstractClassProcessor {
 		val libHandler = new NativeLibHandler(nativeClauses);
 		val nativeLibs = libHandler.moduleNativeLibs
       	
-//		val postConstructAnnotationType = context.findTypeGlobally("javax.annotation.PostConstruct")
-		val postConstructAnnotationType = context.newAnnotationReference("javax.annotation.PostConstruct")
+//		val postConstructAnnotationType = context.findTypeGlobally(Helpers.CLASSNAME_POSTCONSTRUCT)
+		val postConstructAnnotationType = context.newAnnotationReference(Helpers.CLASSNAME_POSTCONSTRUCT)
       	annotatedClass.addMethod("init") [
 			addAnnotation(postConstructAnnotationType)
       		body = ['''
       			String[] nativeLibsPaths = «nativeLibs»;
-      			String effectiveNativeLibsPaths = al.franzis.cheshire.cdi.rt.NativeLibHandler.effectiveNativeLibsPaths(this, libPathProvider, nativeLibsPaths);
-      			al.franzis.cheshire.cdi.rt.NativeLibHandler.augmentJavaLibraryPath(effectiveNativeLibsPaths);
+      			String effectiveNativeLibsPaths = «Helpers.CLASSNAME_NATIVELIBHANDLER».effectiveNativeLibsPaths(this, libPathProvider, nativeLibsPaths);
+      			«Helpers.CLASSNAME_NATIVELIBHANDLER».augmentJavaLibraryPath(effectiveNativeLibsPaths);
       		''']
       	]
 	}
 
-	override doGenerateCode(ClassDeclaration annotatedClass, extension CodeGenerationContext context) {
-	}
+	override doGenerateCode(ClassDeclaration annotatedClass, extension CodeGenerationContext context) {}
 	
 	private def String parseNativeClauses(ClassDeclaration annotatedClass) {
 		for ( field : annotatedClass.declaredFields) {

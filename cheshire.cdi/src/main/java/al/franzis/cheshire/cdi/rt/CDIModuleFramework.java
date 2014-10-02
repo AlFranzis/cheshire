@@ -27,7 +27,7 @@ public class CDIModuleFramework {
 	private BeanManager beanManager;
 	
 	public CDIModuleFramework() {
-		System.out.println("Module framework instance created");
+		RuntimeLogger.getInstance().info("Module framework instance created");
 	}
 	
 	public CDIServiceFactory getServiceFactory() {
@@ -59,12 +59,11 @@ public class CDIModuleFramework {
 	}
 	
 	public void start() {
-		System.out.println("Starting module framework");
+		RuntimeLogger.getInstance().info("Starting module framework -- START");
 		Set<Bean<?>> manifestBeans = beanManager.getBeans(ICDIModuleManifest.class);
 		for(Bean<?> manifestBean : manifestBeans) {
 			ICDIModuleManifest manifestInstance = (ICDIModuleManifest)createBeanInstance(manifestBean);
-			System.out.println("Created Module Manifest instance for module: " + manifestInstance.getBundleName());
-			
+			RuntimeLogger.getInstance().info("Created Module Manifest instance for module: " + manifestInstance.getBundleName());
 		}
 		
 		Set<Bean<?>> activatorBeans = beanManager.getBeans(ICDIModuleActivator.class);
@@ -77,7 +76,7 @@ public class CDIModuleFramework {
 			// 3) start activator
 			startActivator(activator);
 		}
-		System.out.println("Module framework started");
+		RuntimeLogger.getInstance().info("Starting module framework -- FINISHED");
 	}
 	
 	public void registerCDIService(Object serviceInstance) {
@@ -94,9 +93,9 @@ public class CDIModuleFramework {
 		try {
 			Method startMethod = Helpers.getAnnotatedMethod(activator.getClass(), ModuleStartMethod.class);
 			startMethod.invoke(activator);
-			System.out.println("Started Module Activator: " + activator.getClass().getCanonicalName());
+			RuntimeLogger.getInstance().info("Started Module Activator: " + activator.getClass().getCanonicalName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException("Error while starting Module Activator", e);
 		}
 	}
 	
@@ -107,9 +106,9 @@ public class CDIModuleFramework {
 			if ( moduleContextMethod != null )
 				moduleContextMethod.invoke(activator, moduleContext);
 			else
-				System.out.println( String.format( "Module Activator class %s does not contain module context setter-method (@ModuleContextMethod)", activatorClass.getSimpleName() ) );
+				RuntimeLogger.getInstance().info( String.format( "Module Activator class %s does not contain module context setter-method (@ModuleContextMethod)", activatorClass.getSimpleName() ) );
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException("Error while injecting Module Context into Module Activator", e);
 		}
 	}
 	
