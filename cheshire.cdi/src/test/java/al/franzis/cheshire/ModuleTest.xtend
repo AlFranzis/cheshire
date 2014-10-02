@@ -2,10 +2,10 @@ package al.franzis.cheshire
 
 import org.eclipse.xtend.core.compiler.batch.XtendCompilerTester
 import org.junit.Test
-import al.franzis.cheshire.api.Module
+import al.franzis.cheshire.api.ModuleManifest
 
 class ModuleTest {
-	extension XtendCompilerTester compilerTester = XtendCompilerTester.newXtendCompilerTester(Module)
+	extension XtendCompilerTester compilerTester = XtendCompilerTester.newXtendCompilerTester(ModuleManifest)
 	
 	@Test
 	def void testManifestProcessing() {

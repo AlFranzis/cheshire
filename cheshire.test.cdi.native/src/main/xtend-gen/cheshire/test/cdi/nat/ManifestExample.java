@@ -1,12 +1,12 @@
 package cheshire.test.cdi.nat;
 
-import al.franzis.cheshire.api.Module;
+import al.franzis.cheshire.api.ModuleManifest;
 import al.franzis.cheshire.api.nativecode.IRuntimeLibPathProvider;
 import al.franzis.cheshire.cdi.rt.ICDIModuleManifest;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-@Module
+@ModuleManifest
 @SuppressWarnings("all")
 public class ManifestExample implements ICDIModuleManifest {
   public final static String Bundle_Name = "cheshire.test.cdi.native";

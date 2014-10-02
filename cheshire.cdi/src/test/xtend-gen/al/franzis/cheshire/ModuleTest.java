@@ -1,6 +1,6 @@
 package al.franzis.cheshire;
 
-import al.franzis.cheshire.api.Module;
+import al.franzis.cheshire.api.ModuleManifest;
 import org.eclipse.xtend.core.compiler.batch.XtendCompilerTester;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Extension;
@@ -9,7 +9,7 @@ import org.junit.Test;
 @SuppressWarnings("all")
 public class ModuleTest {
   @Extension
-  private XtendCompilerTester compilerTester = XtendCompilerTester.newXtendCompilerTester(Module.class);
+  private XtendCompilerTester compilerTester = XtendCompilerTester.newXtendCompilerTester(ModuleManifest.class);
   
   @Test
   public void testManifestProcessing() {

@@ -10,5 +10,5 @@ import al.franzis.cheshire.cdi.proc.ModuleManifestProcessor
 @Active(ModuleManifestProcessor)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-annotation Module {
+annotation ModuleManifest {
 }

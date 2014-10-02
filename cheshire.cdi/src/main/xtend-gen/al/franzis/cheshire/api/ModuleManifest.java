@@ -10,5 +10,5 @@ import org.eclipse.xtend.lib.macro.Active;
 @Active(ModuleManifestProcessor.class)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Module {
+public @interface ModuleManifest {
 }
