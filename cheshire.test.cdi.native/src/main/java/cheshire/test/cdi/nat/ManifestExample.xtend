@@ -1,6 +1,6 @@
 package cheshire.test.cdi.nat
 
-import al.franzis.cheshire.Module
+import al.franzis.cheshire.api.Module
 
 @Module
 class ManifestExample {

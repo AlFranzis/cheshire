@@ -3,10 +3,10 @@ package cheshire.test.cdi.service;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import al.franzis.cheshire.cdi.CDIModuleFramework;
-import al.franzis.cheshire.service.IServiceDefinition;
-import al.franzis.cheshire.service.Service;
-import al.franzis.cheshire.service.ServiceImplementation;
+import al.franzis.cheshire.api.service.IServiceDefinition;
+import al.franzis.cheshire.cdi.rt.CDIModuleFramework;
+import al.franzis.cheshire.cdi.rt.ServiceImplementation;
+import al.franzis.cheshire.api.service.Service;
 
 @Service(
 	name="JavaServicePlugin",

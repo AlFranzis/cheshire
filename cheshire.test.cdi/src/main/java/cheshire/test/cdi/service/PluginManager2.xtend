@@ -2,10 +2,10 @@ package cheshire.test.cdi.service
 
 import java.util.ArrayList
 import java.util.List
-import al.franzis.cheshire.service.ServiceBindMethod
-import al.franzis.cheshire.service.Service
-import al.franzis.cheshire.service.ServiceActivationMethod
-import al.franzis.cheshire.service.IServiceContext
+import al.franzis.cheshire.api.service.ServiceBindMethod
+import al.franzis.cheshire.api.service.Service
+import al.franzis.cheshire.api.service.ServiceActivationMethod
+import al.franzis.cheshire.api.service.IServiceContext
 
 @Service(
 	name="PluginManager2",

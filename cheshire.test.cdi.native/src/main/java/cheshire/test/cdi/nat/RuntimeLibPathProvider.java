@@ -2,8 +2,8 @@ package cheshire.test.cdi.nat;
 
 import java.io.File;
 
-import al.franzis.cheshire.IRuntimeLibPathProvider;
-import al.franzis.cheshire.cdi.ICDIModuleManifest;
+import al.franzis.cheshire.api.nativecode.IRuntimeLibPathProvider;
+import al.franzis.cheshire.cdi.rt.ICDIModuleManifest;
 
 public class RuntimeLibPathProvider implements IRuntimeLibPathProvider {
 

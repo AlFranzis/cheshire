@@ -1,6 +1,6 @@
 package al.franzis.cheshire;
 
-import al.franzis.cheshire.Module;
+import al.franzis.cheshire.api.Module;
 import org.eclipse.xtend.core.compiler.batch.XtendCompilerTester;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Extension;

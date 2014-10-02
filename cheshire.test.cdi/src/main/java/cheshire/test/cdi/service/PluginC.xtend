@@ -1,6 +1,6 @@
 package cheshire.test.cdi.service
 
-import al.franzis.cheshire.service.Service
+import al.franzis.cheshire.api.service.Service
 
 @Service(
 	name="PluginC",

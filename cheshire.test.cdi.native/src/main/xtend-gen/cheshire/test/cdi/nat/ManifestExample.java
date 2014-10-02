@@ -1,8 +1,8 @@
 package cheshire.test.cdi.nat;
 
-import al.franzis.cheshire.IRuntimeLibPathProvider;
-import al.franzis.cheshire.Module;
-import al.franzis.cheshire.cdi.ICDIModuleManifest;
+import al.franzis.cheshire.api.Module;
+import al.franzis.cheshire.api.nativecode.IRuntimeLibPathProvider;
+import al.franzis.cheshire.cdi.rt.ICDIModuleManifest;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -25,7 +25,7 @@ public class ManifestExample implements ICDIModuleManifest {
   @PostConstruct
   public void init() {
     String[] nativeLibsPaths = new String[] {".\\lib"};
-    String effectiveNativeLibsPaths = al.franzis.cheshire.NativeLibHandler.effectiveNativeLibsPaths(this, libPathProvider, nativeLibsPaths);
-    al.franzis.cheshire.NativeLibHandler.augmentJavaLibraryPath(effectiveNativeLibsPaths);
+    String effectiveNativeLibsPaths = al.franzis.cheshire.cdi.rt.NativeLibHandler.effectiveNativeLibsPaths(this, libPathProvider, nativeLibsPaths);
+    al.franzis.cheshire.cdi.rt.NativeLibHandler.augmentJavaLibraryPath(effectiveNativeLibsPaths);
   }
 }

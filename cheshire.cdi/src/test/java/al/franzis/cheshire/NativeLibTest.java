@@ -6,9 +6,12 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import al.franzis.cheshire.NativeLibHandler.LibInfo;
-import al.franzis.cheshire.cdi.DefaultEnvironmentMatcher;
-import al.franzis.cheshire.cdi.DefaultLibPathProvider;
+import al.franzis.cheshire.api.nativecode.IEnvironmentMatcher;
+import al.franzis.cheshire.api.nativecode.ILibPathProvider;
+import al.franzis.cheshire.cdi.rt.DefaultEnvironmentMatcher;
+import al.franzis.cheshire.cdi.rt.DefaultLibPathProvider;
+import al.franzis.cheshire.cdi.rt.NativeLibHandler;
+import al.franzis.cheshire.cdi.rt.NativeLibHandler.LibInfo;
 
 public class NativeLibTest {
 	

@@ -23,6 +23,9 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

@@ -2,6 +2,7 @@ package al.franzis.cheshire
 
 import org.eclipse.xtend.core.compiler.batch.XtendCompilerTester
 import org.junit.Test
+import al.franzis.cheshire.api.ModuleActivator
 
 class ActivatorTest {
 	extension XtendCompilerTester compilerTester = XtendCompilerTester.newXtendCompilerTester(ModuleActivator)

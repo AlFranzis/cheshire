@@ -1,12 +1,12 @@
 package cheshire.test.cdi.service;
 
-import al.franzis.cheshire.cdi.CDIModuleFramework;
-import al.franzis.cheshire.service.IServiceContext;
-import al.franzis.cheshire.service.IServiceDefinition;
-import al.franzis.cheshire.service.Service;
-import al.franzis.cheshire.service.ServiceActivationMethod;
-import al.franzis.cheshire.service.ServiceBindMethod;
-import al.franzis.cheshire.service.ServiceImplementation;
+import al.franzis.cheshire.api.service.IServiceContext;
+import al.franzis.cheshire.api.service.IServiceDefinition;
+import al.franzis.cheshire.api.service.Service;
+import al.franzis.cheshire.api.service.ServiceActivationMethod;
+import al.franzis.cheshire.api.service.ServiceBindMethod;
+import al.franzis.cheshire.cdi.rt.CDIModuleFramework;
+import al.franzis.cheshire.cdi.rt.ServiceImplementation;
 import cheshire.test.cdi.service.IPlugin;
 import cheshire.test.cdi.service.IPluginManager;
 import java.util.ArrayList;

@@ -1,11 +1,11 @@
 package cheshire.test.cdi.activator
 
-import al.franzis.cheshire.ModuleActivator
-import al.franzis.cheshire.ModuleStartMethod
-import al.franzis.cheshire.ModuleStopMethod
-import al.franzis.cheshire.IModuleContext
+import al.franzis.cheshire.api.ModuleActivator
+import al.franzis.cheshire.api.ModuleStartMethod
+import al.franzis.cheshire.api.ModuleStopMethod
+import al.franzis.cheshire.api.IModuleContext
 import java.net.URL
-import al.franzis.cheshire.ModuleContextMethod
+import al.franzis.cheshire.api.ModuleContextMethod
 
 @ModuleActivator
 class ModuleActivatorExample {
