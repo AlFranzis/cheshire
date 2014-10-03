@@ -6,7 +6,7 @@
   <packaging>eclipse-plugin</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <xtend.version>2.6.0</xtend.version>
+    <xtend.version>2.7.2</xtend.version>
     <tycho-version>0.16.0</tycho-version>
   </properties>
   <repositories>

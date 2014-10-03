@@ -211,10 +211,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
       final String[] properties = ((String[]) _value_3);
       final Map<String, String> propertiesMap = new HashMap<String, String>();
       int i = (-1);
-      int _length = properties.length;
-      boolean _lessThan = ((i + 2) < _length);
-      boolean _while = _lessThan;
-      while (_while) {
+      while (((i + 2) < properties.length)) {
         {
           final int k = (i + 1);
           final int v = (i + 2);
@@ -223,9 +220,6 @@ public class ServiceProcessor extends AbstractClassProcessor {
           String _get_1 = properties[v];
           propertiesMap.put(_get, _get_1);
         }
-        int _length_1 = properties.length;
-        boolean _lessThan_1 = ((i + 2) < _length_1);
-        _while = _lessThan_1;
       }
       InputOutput.<String>println(("Service properties: " + propertiesMap));
       _xblockexpression = new ServiceInfo(serviceName, ((ReferencedServiceInfo[])Conversions.unwrapArray(referencedServices, ReferencedServiceInfo.class)), providedServicesNames, propertiesMap);

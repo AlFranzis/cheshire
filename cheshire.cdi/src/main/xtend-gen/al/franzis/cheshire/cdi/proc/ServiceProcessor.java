@@ -9,7 +9,6 @@ import al.franzis.cheshire.cdi.proc.ServiceInfo;
 import al.franzis.cheshire.cdi.rt.ServiceImplementation;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,6 +29,7 @@ import org.eclipse.xtend.lib.macro.declaration.MutableParameterDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.ParameterDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.TypeReference;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
@@ -45,7 +45,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
   public void doTransform(final MutableClassDeclaration annotatedClass, @Extension final TransformationContext context) {
     final TypeReference serviceDefinitionType = context.newTypeReference(Helpers.CLASSNAME_ISERVICEDEFINITION);
     Iterable<? extends TypeReference> _implementedInterfaces = annotatedClass.getImplementedInterfaces();
-    final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(Lists.<TypeReference>newArrayList(serviceDefinitionType)));
+    final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(CollectionLiterals.<TypeReference>newArrayList(serviceDefinitionType)));
     annotatedClass.setImplementedInterfaces(implInterfaces);
     final AnnotationReference serviceImplementationAnnotationType = context.newAnnotationReference(ServiceImplementation.class);
     annotatedClass.addAnnotation(serviceImplementationAnnotationType);
@@ -181,10 +181,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
         final String[] properties = ((String[]) _value_3);
         final Map<String, String> propertiesMap = new HashMap<String, String>();
         int i = (-1);
-        int _length = properties.length;
-        boolean _lessThan = ((i + 2) < _length);
-        boolean _while = _lessThan;
-        while (_while) {
+        while (((i + 2) < properties.length)) {
           {
             final int k = (i + 1);
             final int v = (i + 2);
@@ -193,9 +190,6 @@ public class ServiceProcessor extends AbstractClassProcessor {
             String _get_1 = properties[v];
             propertiesMap.put(_get, _get_1);
           }
-          int _length_1 = properties.length;
-          boolean _lessThan_1 = ((i + 2) < _length_1);
-          _while = _lessThan_1;
         }
         _xblockexpression = new ServiceInfo(serviceName, ((ReferencedServiceInfo[])Conversions.unwrapArray(referencedServices, ReferencedServiceInfo.class)), providedServicesNames, propertiesMap);
       }
@@ -203,12 +197,12 @@ public class ServiceProcessor extends AbstractClassProcessor {
     } catch (final Throwable _t) {
       if (_t instanceof Throwable) {
         final Throwable t = (Throwable)_t;
-        ServiceInfo _xblockexpression_1 = null;
+        Object _xblockexpression_1 = null;
         {
           this.logMsgBuf.append(("Error: " + t));
           _xblockexpression_1 = null;
         }
-        _xtrycatchfinallyexpression = _xblockexpression_1;
+        _xtrycatchfinallyexpression = ((ServiceInfo)_xblockexpression_1);
       } else {
         throw Exceptions.sneakyThrow(_t);
       }

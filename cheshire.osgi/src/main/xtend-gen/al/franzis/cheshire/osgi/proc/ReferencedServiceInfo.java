@@ -1,6 +1,7 @@
 package al.franzis.cheshire.osgi.proc;
 
 import org.eclipse.xtend.lib.Data;
+import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringHelper;
 
 @Data
@@ -8,15 +9,7 @@ import org.eclipse.xtext.xbase.lib.util.ToStringHelper;
 public class ReferencedServiceInfo {
   private final String _name;
   
-  public String getName() {
-    return this._name;
-  }
-  
   private final String _bindMethodName;
-  
-  public String getBindMethodName() {
-    return this._bindMethodName;
-  }
   
   public ReferencedServiceInfo(final String name, final String bindMethodName) {
     super();
@@ -25,6 +18,7 @@ public class ReferencedServiceInfo {
   }
   
   @Override
+  @Pure
   public int hashCode() {
     final int prime = 31;
     int result = 1;
@@ -34,6 +28,7 @@ public class ReferencedServiceInfo {
   }
   
   @Override
+  @Pure
   public boolean equals(final Object obj) {
     if (this == obj)
       return true;
@@ -56,8 +51,19 @@ public class ReferencedServiceInfo {
   }
   
   @Override
+  @Pure
   public String toString() {
     String result = new ToStringHelper().toString(this);
     return result;
+  }
+  
+  @Pure
+  public String getName() {
+    return this._name;
+  }
+  
+  @Pure
+  public String getBindMethodName() {
+    return this._bindMethodName;
   }
 }

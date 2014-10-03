@@ -3,7 +3,6 @@ package al.franzis.cheshire.cdi.proc;
 import al.franzis.cheshire.cdi.proc.Helpers;
 import al.franzis.cheshire.cdi.rt.NativeLibHandler;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import java.util.Collections;
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor;
 import org.eclipse.xtend.lib.macro.CodeGenerationContext;
@@ -18,6 +17,7 @@ import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.TypeReference;
 import org.eclipse.xtend.lib.macro.expression.Expression;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
@@ -28,7 +28,7 @@ public class ModuleManifestProcessor extends AbstractClassProcessor {
     try {
       final TypeReference moduleManifestType = context.newTypeReference(Helpers.CLASSNAME_ICDIModuleManifest);
       Iterable<? extends TypeReference> _implementedInterfaces = annotatedClass.getImplementedInterfaces();
-      final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(Lists.<TypeReference>newArrayList(moduleManifestType)));
+      final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(CollectionLiterals.<TypeReference>newArrayList(moduleManifestType)));
       annotatedClass.setImplementedInterfaces(implInterfaces);
       final Procedure1<MutableMethodDeclaration> _function = new Procedure1<MutableMethodDeclaration>() {
         public void apply(final MutableMethodDeclaration it) {
@@ -92,7 +92,7 @@ public class ModuleManifestProcessor extends AbstractClassProcessor {
   }
   
   private String parseNativeClauses(final ClassDeclaration annotatedClass) {
-    String _xblockexpression = null;
+    Object _xblockexpression = null;
     {
       Iterable<? extends FieldDeclaration> _declaredFields = annotatedClass.getDeclaredFields();
       for (final FieldDeclaration field : _declaredFields) {
@@ -108,6 +108,6 @@ public class ModuleManifestProcessor extends AbstractClassProcessor {
       }
       _xblockexpression = null;
     }
-    return _xblockexpression;
+    return ((String)_xblockexpression);
   }
 }

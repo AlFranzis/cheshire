@@ -6,7 +6,6 @@ import al.franzis.cheshire.api.ModuleStopMethod;
 import al.franzis.cheshire.osgi.proc.Helpers;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor;
@@ -20,6 +19,7 @@ import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration;
 import org.eclipse.xtend.lib.macro.declaration.TypeReference;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
@@ -37,7 +37,7 @@ public class ModuleActivatorProcessor extends AbstractClassProcessor {
   public void turnIntoOSGiActivator(final MutableClassDeclaration annotatedClass, @Extension final TransformationContext context) {
     final TypeReference osgiBundleActivatorType = context.newTypeReference(Helpers.CLASSNAME_BUNDLEACTIVATOR);
     Iterable<? extends TypeReference> _implementedInterfaces = annotatedClass.getImplementedInterfaces();
-    final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(Lists.<TypeReference>newArrayList(osgiBundleActivatorType)));
+    final Iterable<TypeReference> implInterfaces = Iterables.<TypeReference>concat(_implementedInterfaces, Collections.<TypeReference>unmodifiableList(CollectionLiterals.<TypeReference>newArrayList(osgiBundleActivatorType)));
     annotatedClass.setImplementedInterfaces(implInterfaces);
     final TypeReference osgiBundleContextType = context.newTypeReference(Helpers.ClASSNAME_BUNDLECONTEXT);
     MutableMethodDeclaration _findAnnotatedMethod = this.findAnnotatedMethod(annotatedClass, ModuleStartMethod.class);

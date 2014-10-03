@@ -59,8 +59,8 @@ public class PluginManager2 implements IPluginManager, IServiceDefinition {
   @Inject
   public void setInstances0(@ServiceImplementation final Instance<IPlugin> instances) {
     java.util.Iterator<cheshire.test.cdi.service.IPlugin> it = instances.iterator();
-    					while(it.hasNext()) {
+    while(it.hasNext()) {
     						addPlugin(it.next());
-    					}
+    }
   }
 }
