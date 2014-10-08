@@ -11,4 +11,6 @@ interface IModule {
 	
 	def String getName()
 	
+	def String getVersion()
+	
 }

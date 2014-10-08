@@ -12,5 +12,7 @@ public interface IModule {
   
   public abstract String getName();
   
+  public abstract String getVersion();
+  
   public abstract IModuleContext getModuleContext();
 }

@@ -23,5 +23,9 @@ public class CDIModule implements IModule {
 	public String getName() {
 		return "CDIModule";
 	}
+	
+	public String getVersion() {
+		throw new IllegalStateException( "Method getVersion() not implemented for CDI");
+	}
 
 }

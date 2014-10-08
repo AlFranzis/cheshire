@@ -10,4 +10,6 @@ public interface IModule {
   public abstract Enumeration<URL> getResources(final String name);
   
   public abstract String getName();
+  
+  public abstract String getVersion();
 }

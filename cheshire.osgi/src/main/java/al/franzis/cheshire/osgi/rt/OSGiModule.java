@@ -26,13 +26,16 @@ public class OSGiModule implements IModule {
 		try {
 			return bundle.getResources( name );
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException("Error while resolving OSGi bundle resource", e);
 		}
-		return null;
 	}
 
 	public String getName() {
 		return bundle.getSymbolicName();
+	}
+	
+	public String getVersion() {
+		return bundle.getVersion().toString();
 	}
 
 	@Override
