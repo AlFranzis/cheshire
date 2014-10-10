@@ -8,11 +8,11 @@ import java.util.Map;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.osgi.service.component.ComponentContext;
 
-@Service(name = "PluginA", providedServices = { "al.franzis.cheshire.test.osgi.service.IPlugin" }, referencedServices = {}, properties = { "Prop1", "Value1", "Prop2", "Value2" })
+@Service(name = "PluginA", providedServices = { "al.franzis.cheshire.test.osgi.service.IPlugin" })
 @SuppressWarnings("all")
 public class PluginA implements IPlugin {
-  public String PluginA() {
-    return InputOutput.<String>println("PluginA created");
+  public PluginA() {
+    InputOutput.<String>println("PluginA created");
   }
   
   @ServiceActivationMethod

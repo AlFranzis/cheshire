@@ -27,7 +27,7 @@ annotation ServiceUnbindMethod {
 @Retention(RetentionPolicy.RUNTIME)
 annotation Service {
 	String name
-	String[] referencedServices
-	String[] providedServices
-	String[] properties
+	String[] referencedServices = #[]
+	String[] providedServices = #[]
+	String[] properties = #[]
 }

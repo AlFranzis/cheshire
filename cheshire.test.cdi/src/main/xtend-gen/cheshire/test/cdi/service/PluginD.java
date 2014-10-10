@@ -9,7 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 
-@Service(name = "PluginD", providedServices = { "cheshire.test.cdi.service.IPlugin" }, referencedServices = {}, properties = { "Prop1", "Value1", "Prop2", "Value2" })
+@Service(name = "PluginD", providedServices = { "cheshire.test.cdi.service.IPlugin" })
 @ServiceImplementation
 @SuppressWarnings("all")
 public class PluginD implements IPlugin, IServiceDefinition {

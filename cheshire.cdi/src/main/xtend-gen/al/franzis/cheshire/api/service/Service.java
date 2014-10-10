@@ -12,7 +12,7 @@ import org.eclipse.xtend.lib.macro.Active;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Service {
   public String name();
-  public String[] referencedServices();
-  public String[] providedServices();
-  public String[] properties();
+  public String[] referencedServices() default {};
+  public String[] providedServices() default {};
+  public String[] properties() default {};
 }

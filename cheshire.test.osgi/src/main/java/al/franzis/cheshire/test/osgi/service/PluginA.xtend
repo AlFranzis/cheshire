@@ -6,13 +6,11 @@ import al.franzis.cheshire.api.service.IServiceContext
 
 @Service(
 	name="PluginA",
-	providedServices= #["al.franzis.cheshire.test.osgi.service.IPlugin"],
-	referencedServices=#[],
-	properties=#[ "Prop1", "Value1", "Prop2", "Value2"]
+	providedServices= #["al.franzis.cheshire.test.osgi.service.IPlugin"]
 )
 class PluginA implements IPlugin {
 	
-	def PluginA() {
+	new() {
 		println("PluginA created");
 	}
 	

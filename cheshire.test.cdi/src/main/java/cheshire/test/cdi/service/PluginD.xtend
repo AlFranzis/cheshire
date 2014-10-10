@@ -4,9 +4,7 @@ import al.franzis.cheshire.api.service.Service
 
 @Service(
 	name="PluginD",
-	providedServices=#["cheshire.test.cdi.service.IPlugin"],
-	referencedServices=#[],
-	properties=#["Prop1", "Value1", "Prop2", "Value2"]
+	providedServices=#["cheshire.test.cdi.service.IPlugin"]
 )
 class PluginD implements IPlugin {
 	
