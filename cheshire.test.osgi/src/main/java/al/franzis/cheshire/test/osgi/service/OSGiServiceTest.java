@@ -8,6 +8,8 @@ import org.junit.Test;
 import al.franzis.cheshire.api.IModuleContext;
 import al.franzis.cheshire.api.service.IServiceReference;
 import al.franzis.cheshire.test.osgi.activator.ModuleActivatorExample;
+import al.franzis.cheshire.test.osgi.service.factory.IOverlay;
+import al.franzis.cheshire.test.osgi.service.factory.IOverlayProvider;
 
 public class OSGiServiceTest {
 
@@ -22,5 +24,15 @@ public class OSGiServiceTest {
 		
 		// check that module activator was 1. started and 2. resource was loaded correctly
 		Assert.assertNotNull(ModuleActivatorExample.loadedResource); 
+		
+		testOverlayProvider(moduleContext);
+	}
+	
+	private void testOverlayProvider( IModuleContext moduleContext) {
+		IServiceReference<IOverlayProvider> serviceRef = moduleContext.getServiceReference(IOverlayProvider.class);
+		IOverlayProvider overlayProvider = moduleContext.getService(serviceRef);
+		List<IOverlay> overlays = overlayProvider.getOverlays();
+		System.out.println("Overlays known to OverlayProvider: " + overlays);
+		Assert.assertEquals(1, overlays.size());
 	}
 }

@@ -4,7 +4,9 @@ Bundle-Name: cheshire.test.osgi
 Bundle-SymbolicName: cheshire.test.osgi
 Service-Component: OSGI-INF/PluginA.xml,
  OSGI-INF/PluginManager2.xml,
- OSGI-INF/PluginC.xml
+ OSGI-INF/PluginC.xml,
+ OSGI-INF/OverlayProvider.xml,
+ OSGI-INF/CircleOverlay.xml
 Bundle-Version: 0.0.1.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Al Franzis

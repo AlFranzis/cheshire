@@ -14,5 +14,7 @@ class ManifestExample {
 	public static val String Bundle_Activator = "al.franzis.cheshire.test.osgi.activator.ModuleActivatorExample"
 	public static val String[] Service_Component = #["al.franzis.cheshire.test.osgi.service.PluginA",
  		"al.franzis.cheshire.test.osgi.service.PluginManager2",
- 		"al.franzis.cheshire.test.osgi.service.PluginC"]
+ 		"al.franzis.cheshire.test.osgi.service.PluginC",
+ 		"al.franzis.cheshire.test.osgi.service.factory.OverlayProvider",
+ 		"al.franzis.cheshire.test.osgi.service.factory.CircleOverlay"]
 }
