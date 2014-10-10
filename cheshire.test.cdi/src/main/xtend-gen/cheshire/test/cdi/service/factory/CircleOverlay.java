@@ -9,7 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 
-@Service(name = "CircleOverlay", providedServices = "cheshire.test.cdi.service.factory.IOverlay", factory = "overlayFactory")
+@Service(name = "CircleOverlay", providedServices = { "cheshire.test.cdi.service.factory.IOverlay" }, factory = "overlayFactory")
 @ServiceImplementation
 @SuppressWarnings("all")
 public class CircleOverlay implements IOverlay, IServiceDefinition {
