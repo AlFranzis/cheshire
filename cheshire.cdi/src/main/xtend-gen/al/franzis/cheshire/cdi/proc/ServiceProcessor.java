@@ -4,6 +4,7 @@ import al.franzis.cheshire.api.service.Service;
 import al.franzis.cheshire.api.service.ServiceBindMethod;
 import al.franzis.cheshire.cdi.proc.Helpers;
 import al.franzis.cheshire.cdi.proc.Logger;
+import al.franzis.cheshire.cdi.proc.ReferencedServiceFactoryInfo;
 import al.franzis.cheshire.cdi.proc.ReferencedServiceInfo;
 import al.franzis.cheshire.cdi.proc.ServiceInfo;
 import al.franzis.cheshire.cdi.rt.ServiceImplementation;
@@ -163,9 +164,9 @@ public class ServiceProcessor extends AbstractClassProcessor {
         final String serviceName = ((String) _value);
         Object _value_1 = serviceAnnotation.getValue("providedServices");
         final String[] providedServicesNames = ((String[]) _value_1);
+        final Map<String, String> bindMethodMap = this.getBindMethodsMap(annotatedClass);
         Object _value_2 = serviceAnnotation.getValue("referencedServices");
         final String[] referencedServicesNames = ((String[]) _value_2);
-        final Map<String, String> bindMethodMap = this.getBindMethodsMap(annotatedClass);
         final Function1<String, ReferencedServiceInfo> _function_1 = new Function1<String, ReferencedServiceInfo>() {
           public ReferencedServiceInfo apply(final String sn) {
             ReferencedServiceInfo _xblockexpression = null;
@@ -177,8 +178,21 @@ public class ServiceProcessor extends AbstractClassProcessor {
           }
         };
         final List<ReferencedServiceInfo> referencedServices = ListExtensions.<String, ReferencedServiceInfo>map(((List<String>)Conversions.doWrapArray(referencedServicesNames)), _function_1);
-        Object _value_3 = serviceAnnotation.getValue("properties");
-        final String[] properties = ((String[]) _value_3);
+        Object _value_3 = serviceAnnotation.getValue("referencedServiceFactories");
+        final String[] referencedServiceFactoryNames = ((String[]) _value_3);
+        final Function1<String, ReferencedServiceFactoryInfo> _function_2 = new Function1<String, ReferencedServiceFactoryInfo>() {
+          public ReferencedServiceFactoryInfo apply(final String fn) {
+            ReferencedServiceFactoryInfo _xblockexpression = null;
+            {
+              final String bindMethodName = bindMethodMap.get("al.franzis.cheshire.api.service.IServiceFactory");
+              _xblockexpression = new ReferencedServiceFactoryInfo(fn, bindMethodName);
+            }
+            return _xblockexpression;
+          }
+        };
+        final List<ReferencedServiceFactoryInfo> referencedServiceFactories = ListExtensions.<String, ReferencedServiceFactoryInfo>map(((List<String>)Conversions.doWrapArray(referencedServiceFactoryNames)), _function_2);
+        Object _value_4 = serviceAnnotation.getValue("properties");
+        final String[] properties = ((String[]) _value_4);
         final Map<String, String> propertiesMap = new HashMap<String, String>();
         int i = (-1);
         while (((i + 2) < properties.length)) {
@@ -191,7 +205,9 @@ public class ServiceProcessor extends AbstractClassProcessor {
             propertiesMap.put(_get, _get_1);
           }
         }
-        _xblockexpression = new ServiceInfo(serviceName, ((ReferencedServiceInfo[])Conversions.unwrapArray(referencedServices, ReferencedServiceInfo.class)), providedServicesNames, propertiesMap);
+        Object _value_5 = serviceAnnotation.getValue("factory");
+        final String factory = ((String) _value_5);
+        _xblockexpression = new ServiceInfo(serviceName, ((ReferencedServiceInfo[])Conversions.unwrapArray(referencedServices, ReferencedServiceInfo.class)), ((ReferencedServiceFactoryInfo[])Conversions.unwrapArray(referencedServiceFactories, ReferencedServiceFactoryInfo.class)), providedServicesNames, factory, propertiesMap);
       }
       _xtrycatchfinallyexpression = _xblockexpression;
     } catch (final Throwable _t) {

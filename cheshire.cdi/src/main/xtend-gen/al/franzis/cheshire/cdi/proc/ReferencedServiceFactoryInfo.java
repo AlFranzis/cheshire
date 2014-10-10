@@ -6,12 +6,12 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
 @Data
 @SuppressWarnings("all")
-public class ReferencedServiceInfo {
+public class ReferencedServiceFactoryInfo {
   private final String name;
   
   private final String bindMethodName;
   
-  public ReferencedServiceInfo(final String name, final String bindMethodName) {
+  public ReferencedServiceFactoryInfo(final String name, final String bindMethodName) {
     super();
     this.name = name;
     this.bindMethodName = bindMethodName;
@@ -36,7 +36,7 @@ public class ReferencedServiceInfo {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    ReferencedServiceInfo other = (ReferencedServiceInfo) obj;
+    ReferencedServiceFactoryInfo other = (ReferencedServiceFactoryInfo) obj;
     if (this.name == null) {
       if (other.name != null)
         return false;

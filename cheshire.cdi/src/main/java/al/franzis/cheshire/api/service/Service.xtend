@@ -29,6 +29,8 @@ annotation Service {
 	String name
 	String[] referencedServices = #[]
 	String[] providedServices = #[]
+	String factory = ""
+	String[] referencedServiceFactories = #[]
 	String[] properties = #[]
 }
 

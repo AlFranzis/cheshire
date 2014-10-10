@@ -11,6 +11,7 @@ import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MethodDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
+import org.eclipse.xtend.lib.annotations.Data
 import al.franzis.cheshire.api.service.Service
 
 class ServiceProcessor extends AbstractClassProcessor {
@@ -94,12 +95,18 @@ class ServiceProcessor extends AbstractClassProcessor {
 		
 			val String[] providedServicesNames = serviceAnnotation.getValue("providedServices") as String[];
 		
-			val String[] referencedServicesNames = serviceAnnotation.getValue("referencedServices") as String[];
-		
 			val Map<String,String> bindMethodMap = getBindMethodsMap(annotatedClass)
+		
+			val String[] referencedServicesNames = serviceAnnotation.getValue("referencedServices") as String[];
 			val List<ReferencedServiceInfo> referencedServices = referencedServicesNames.map[ sn | 
 				val bindMethodName = bindMethodMap.get(sn)
 				new ReferencedServiceInfo(sn, bindMethodName)
+			]
+			
+			val String[] referencedServiceFactoryNames = serviceAnnotation.getValue("referencedServiceFactories") as String[];
+			val List<ReferencedServiceFactoryInfo> referencedServiceFactories = referencedServiceFactoryNames.map[ fn | 
+				val bindMethodName = bindMethodMap.get("al.franzis.cheshire.api.service.IServiceFactory")
+				new ReferencedServiceFactoryInfo(fn, bindMethodName)
 			]
 
 			val String[] properties = serviceAnnotation.getValue("properties") as String[];
@@ -113,7 +120,8 @@ class ServiceProcessor extends AbstractClassProcessor {
 				propertiesMap.put( properties.get(k), properties.get(v))
 			}
 		
-			new ServiceInfo(serviceName, referencedServices, providedServicesNames, propertiesMap)
+			val factory = serviceAnnotation.getValue("factory") as String
+			new ServiceInfo(serviceName, referencedServices, referencedServiceFactories, providedServicesNames, factory, propertiesMap)
 		
 		} catch ( Throwable t ) {
 			logMsgBuf.append("Error: " + t)
@@ -135,12 +143,20 @@ class ServiceProcessor extends AbstractClassProcessor {
 class ServiceInfo {
 	String name
 	ReferencedServiceInfo[] referencedServices
+	ReferencedServiceFactoryInfo[] referencedServiceFactories
 	String[] providedServices
+	String factory
 	Map<String,String> properties
 }
 
 @Data
 class ReferencedServiceInfo {
+	String name
+	String bindMethodName
+}
+
+@Data
+class ReferencedServiceFactoryInfo {
 	String name
 	String bindMethodName
 }

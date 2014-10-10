@@ -20,9 +20,11 @@ import javax.inject.Singleton;
 
 import al.franzis.cheshire.api.service.IServiceContext;
 import al.franzis.cheshire.api.service.IServiceDefinition;
+import al.franzis.cheshire.api.service.IServiceFactory;
 import al.franzis.cheshire.api.service.IServiceReference;
 import al.franzis.cheshire.api.service.Service;
 import al.franzis.cheshire.api.service.ServiceActivationMethod;
+import al.franzis.cheshire.api.service.ServiceBindMethod;
 
 @Singleton
 public class CDIServiceFactory {
@@ -68,6 +70,8 @@ public class CDIServiceFactory {
 		CDIServiceReference<?> serviceRef = new CDIServiceReference(serviceInstance);
 		container.addServiceInstance(serviceRef);
 		
+		injectServiceFactories(container, serviceInstance);
+		
 		IServiceContext serviceContext = new CDIServiceContext( container.getServiceInfo().getProperties() );
 		callActivationMethod(serviceInstance, serviceContext);
 	}
@@ -85,11 +89,10 @@ public class CDIServiceFactory {
 		List<CDIServiceReference<S>> serviceInstances = serviceContainer.getServiceInstances();
 		if ( serviceInstances.isEmpty())
 		{
-			Class<S> serviceImpl = (Class<S>)serviceContainer.getImplementationClass();
 			/* when calling createService() the CDI container calls registerService() implicitly
 			 * to register the service instance
 			 */
-			createService(serviceImpl);
+			serviceContainer.serviceFactoryInstance.newInstance();
 		}
 		
 		serviceInstance = serviceInstances.get(0);
@@ -109,11 +112,10 @@ public class CDIServiceFactory {
 			List<CDIServiceReference<S>> serviceInstances = serviceContainer.getServiceInstances();
 			if ( serviceInstances.isEmpty())
 			{
-				Class<S> serviceImpl = (Class<S>)serviceContainer.getImplementationClass();
 				/* when calling createService() the CDI container calls registerService() implicitly
 				 * to register the service instance
 				 */
-				createService(serviceImpl);
+				serviceContainer.serviceFactoryInstance.newInstance();
 			}
 			
 			serviceInstance = serviceInstances.get(0);
@@ -135,21 +137,52 @@ public class CDIServiceFactory {
 		return null;
 	}
 	
-	private <S> S createService( Class<S> serviceImpl ) {
-		Set<Bean<?>> serviceImplBeans = beanManager.getBeans(serviceImpl, new AnnotationLiteral<ServiceImplementation>(){});
-		CreationalContext ctx = beanManager.createCreationalContext(null);
-		S serviceInstance = (S)serviceImplBeans.iterator().next().create(ctx);
-		return serviceInstance;
+	private void injectServiceFactories( ServiceProviderContainer container, Object serviceInstance ) {
+		for( String referencedServiceFactory : container.getServiceInfo().getReferencedServiceFactories() ) {
+			for (List<ServiceProviderContainer<?>> serviceContainers : services.values()) {
+				for(ServiceProviderContainer sContainer : serviceContainers) {
+					if ( sContainer.getServiceInfo().getFactory().equals(referencedServiceFactory)) {
+						CDIServiceFactoryImpl serviceFactory = sContainer.serviceFactoryInstance;
+						injectServiceFactory(serviceInstance, serviceFactory);
+					}
+				}
+			}
+		}
 	}
 	
-	private static class ServiceProviderContainer<S> {
+	private void injectServiceFactory( Object serviceInstance, CDIServiceFactoryImpl serviceFactory) {
+		for ( Method m : Helpers.getAnnotatedMethods( serviceInstance.getClass(), ServiceBindMethod.class) ) {
+			Class<?>[] methodParams = m.getParameterTypes();
+			if ( methodParams.length == 1 && methodParams[0].equals(IServiceFactory.class)) {
+				try {
+					m.invoke(serviceInstance, serviceFactory);
+				} catch (Exception e) {
+					throw new RuntimeException("Error while calling service bind method", e);
+				}
+			}
+		}
+	}
+	
+	
+	
+	private class ServiceProviderContainer<S> {
 		private final ServiceInfo serviceInfo;
 		private final Class<S> implementationClass;
 		private final List<CDIServiceReference<S>> serviceInstances = new LinkedList<>();
+		private CDIServiceFactoryImpl serviceFactoryInstance;
 		
 		public ServiceProviderContainer(ServiceInfo serviceInfo) {
 			this.serviceInfo = serviceInfo;
 			this.implementationClass = (Class<S>)serviceInfo.getServiceImplementation();
+			this.serviceFactoryInstance = createServiceFactory( implementationClass );
+		}
+		
+		private <S> CDIServiceFactoryImpl createServiceFactory( Class<S> serviceImpl ) {
+			Set<Bean<?>> serviceImplBeans = beanManager.getBeans(CDIServiceFactoryImpl.class);
+			CreationalContext ctx = beanManager.createCreationalContext(null);
+			CDIServiceFactoryImpl serviceFactoryInstance = (CDIServiceFactoryImpl)serviceImplBeans.iterator().next().create(ctx);
+			serviceFactoryInstance.setServiceImplementation(serviceImpl);
+			return serviceFactoryInstance;
 		}
 
 		public void addServiceInstance(CDIServiceReference<S> serviceInstance) {
@@ -187,21 +220,25 @@ public class CDIServiceFactory {
 		if ( service == null)
 			return null;
 		
-		return new ServiceInfo(service.name(), clazz, service.referencedServices(), service.providedServices(), service.properties());
+		return new ServiceInfo(service.name(), clazz, service.factory(), service.referencedServices(), service.referencedServiceFactories(), service.providedServices(), service.properties());
 	}
 	
 	private static class ServiceInfo {
 		private final String name;
 		private final Class<?> serviceImplementation;
+		private final String factory;
 		private final List<String> referencedServices;
+		private final List<String> referencedServiceFactories;
 		private final List<String> providedServices;
 		private final Map<String, String> properties;
 
-		private ServiceInfo(String name, Class<?> serviceImplementation, String[] referencedServices,
+		private ServiceInfo(String name, Class<?> serviceImplementation, String factory, String[] referencedServices, String[] referencedServiceFactories,
 				String[] providedServices, String[] properties) {
 			this.name = name;
 			this.serviceImplementation = serviceImplementation;
+			this.factory = factory;
 			this.referencedServices = Arrays.asList(referencedServices);
+			this.referencedServiceFactories = Arrays.asList(referencedServiceFactories);
 			this.providedServices = Arrays.asList(providedServices);
 			this.properties = new HashMap<>();
 			for (int i = 0; i < properties.length;) {
@@ -216,9 +253,17 @@ public class CDIServiceFactory {
 		public Class<?> getServiceImplementation() {
 			return serviceImplementation;
 		}
+		
+		public String getFactory() {
+			return factory;
+		}
 
 		public List<String> getReferencedServices() {
 			return referencedServices;
+		}
+		
+		public List<String> getReferencedServiceFactories() {
+			return referencedServiceFactories;
 		}
 
 		public List<String> getProvidedServices() {
