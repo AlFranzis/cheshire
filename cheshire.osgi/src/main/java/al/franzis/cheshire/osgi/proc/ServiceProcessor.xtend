@@ -15,6 +15,7 @@ import org.eclipse.xtend.lib.macro.file.FileLocations
 import org.eclipse.xtend.lib.macro.file.FileSystemSupport
 import org.eclipse.xtend.lib.macro.file.MutableFileSystemSupport
 import al.franzis.cheshire.api.service.Service
+import org.eclipse.xtend.lib.annotations.Data
 
 class ServiceProcessor extends AbstractClassProcessor {
 	val StringBuffer logMsgBuf = new StringBuffer;
@@ -36,6 +37,24 @@ class ServiceProcessor extends AbstractClassProcessor {
       				''']
 	      		]
 	      	}
+      	}
+      	
+      	val serviceInfo = parseServiceDefinition(annotatedClass, Service)
+      	
+      	if(!serviceInfo.referencedServiceFactories.empty) {
+      		val referencedServiceFactory = serviceInfo.referencedServiceFactories.iterator.next
+      	
+      		val osgiComponentFactoryType = context.newTypeReference("org.osgi.service.component.ComponentFactory")
+      		
+      		val bindMethodName = referencedServiceFactory.bindMethodName
+      		
+      		annotatedClass.addMethod(bindMethodName) [
+				addParameter( "componentFactory", osgiComponentFactoryType )
+      			body = ['''
+      			«Helpers.CLASSNAME_OSGISERVICEFACTORY» osgiComponentFactory = new «Helpers.CLASSNAME_OSGISERVICEFACTORY»(componentFactory);
+      				«bindMethodName»(osgiComponentFactory);
+      			''']
+      		]
       	}
       	
       	if(!PathHelper.eclipseEnvironment)
@@ -63,7 +82,11 @@ class ServiceProcessor extends AbstractClassProcessor {
 		PathHelper.getInstance().setContents(mfss, osgiInfPath, file,
 		'''
 			<?xml version="1.0" encoding="UTF-8"?>
-			<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="«serviceInfo.name»">
+			<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" 
+			«IF !serviceInfo.factory.empty»
+			  factory="«serviceInfo.factory»"
+			«ENDIF»
+			name="«serviceInfo.name»">
 						<implementation class="«serviceClass.qualifiedName»"/>
 						<service>
 							«FOR providedService : serviceInfo.providedServices»
@@ -73,7 +96,10 @@ class ServiceProcessor extends AbstractClassProcessor {
 						
 						«FOR refService : serviceInfo.referencedServices»
 							<reference bind="«refService.bindMethodName»" cardinality="0..n" interface="«refService.name»" name="IPlugin" policy="static"/>
-			«ENDFOR»
+						«ENDFOR»
+						«FOR refServiceFactory : serviceInfo.referencedServiceFactories»
+							<reference bind="«refServiceFactory.bindMethodName»" cardinality="0..n" target="(component.factory=«refServiceFactory.name»)" interface="org.osgi.service.component.ComponentFactory" name="IPlugin" policy="static"/>
+						«ENDFOR»
 			«FOR prop : serviceInfo.properties.entrySet»
 				<property name="«prop.key»" type="String" value="«prop.value»"/>					
 			«ENDFOR»
@@ -94,10 +120,17 @@ class ServiceProcessor extends AbstractClassProcessor {
 		println(referencedServicesNames)
 		
 		val Map<String,String> bindMethodMap = getBindMethodsMap(annotatedClass)
+		
 		val List<ReferencedServiceInfo> referencedServices = referencedServicesNames.map[ sn | 
 			val bindMethodName = bindMethodMap.get(sn)
 			new ReferencedServiceInfo(sn, bindMethodName)
 		]
+		
+		val String[] referencedServiceFactoryNames = serviceAnnotation.getValue("referencedServiceFactories") as String[];
+			val List<ReferencedServiceFactoryInfo> referencedServiceFactories = referencedServiceFactoryNames.map[ fn | 
+				val bindMethodName = bindMethodMap.get("al.franzis.cheshire.api.service.IServiceFactory")
+				new ReferencedServiceFactoryInfo(fn, bindMethodName)
+			]
 
 		val String[] properties = serviceAnnotation.getValue("properties") as String[];
 		val Map<String,String> propertiesMap = new HashMap();
@@ -109,9 +142,9 @@ class ServiceProcessor extends AbstractClassProcessor {
 			i = i + 2;
 			propertiesMap.put( properties.get(k), properties.get(v))
 		}
-		println( "Service properties: " + propertiesMap)
 		
-		new ServiceInfo(serviceName, referencedServices, providedServicesNames, propertiesMap)
+		val factory = serviceAnnotation.getValue("factory") as String
+		new ServiceInfo(serviceName, referencedServices, referencedServiceFactories, providedServicesNames, factory, propertiesMap)
 	}
 	
 	private def Map<String,String> getBindMethodsMap( ClassDeclaration clazzDeclaration ) {
@@ -133,12 +166,20 @@ class ServiceProcessor extends AbstractClassProcessor {
 class ServiceInfo {
 	String name
 	ReferencedServiceInfo[] referencedServices
+	ReferencedServiceFactoryInfo[] referencedServiceFactories
 	String[] providedServices
+	String factory
 	Map<String,String> properties
 }
 
 @Data
 class ReferencedServiceInfo {
+	String name
+	String bindMethodName
+}
+
+@Data
+class ReferencedServiceFactoryInfo {
 	String name
 	String bindMethodName
 }

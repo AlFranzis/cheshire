@@ -6,6 +6,7 @@ import al.franzis.cheshire.api.service.ServiceBindMethod;
 import al.franzis.cheshire.osgi.proc.Helpers;
 import al.franzis.cheshire.osgi.proc.Logger;
 import al.franzis.cheshire.osgi.proc.PathHelper;
+import al.franzis.cheshire.osgi.proc.ReferencedServiceFactoryInfo;
 import al.franzis.cheshire.osgi.proc.ReferencedServiceInfo;
 import al.franzis.cheshire.osgi.proc.ServiceInfo;
 import com.google.common.base.Objects;
@@ -81,9 +82,42 @@ public class ServiceProcessor extends AbstractClassProcessor {
         annotatedClass.addMethod("activate", _function);
       }
     }
-    boolean _isEclipseEnvironment = PathHelper.isEclipseEnvironment();
-    boolean _not_1 = (!_isEclipseEnvironment);
+    final ServiceInfo serviceInfo = this.parseServiceDefinition(annotatedClass, Service.class);
+    ReferencedServiceFactoryInfo[] _referencedServiceFactories = serviceInfo.getReferencedServiceFactories();
+    boolean _isEmpty_1 = ((List<ReferencedServiceFactoryInfo>)Conversions.doWrapArray(_referencedServiceFactories)).isEmpty();
+    boolean _not_1 = (!_isEmpty_1);
     if (_not_1) {
+      ReferencedServiceFactoryInfo[] _referencedServiceFactories_1 = serviceInfo.getReferencedServiceFactories();
+      Iterator<ReferencedServiceFactoryInfo> _iterator_1 = ((List<ReferencedServiceFactoryInfo>)Conversions.doWrapArray(_referencedServiceFactories_1)).iterator();
+      final ReferencedServiceFactoryInfo referencedServiceFactory = _iterator_1.next();
+      final TypeReference osgiComponentFactoryType = context.newTypeReference("org.osgi.service.component.ComponentFactory");
+      final String bindMethodName = referencedServiceFactory.getBindMethodName();
+      final Procedure1<MutableMethodDeclaration> _function_1 = new Procedure1<MutableMethodDeclaration>() {
+        public void apply(final MutableMethodDeclaration it) {
+          it.addParameter("componentFactory", osgiComponentFactoryType);
+          final CompilationStrategy _function = new CompilationStrategy() {
+            public CharSequence compile(final CompilationStrategy.CompilationContext it) {
+              StringConcatenation _builder = new StringConcatenation();
+              _builder.append(Helpers.CLASSNAME_OSGISERVICEFACTORY, "");
+              _builder.append(" osgiComponentFactory = new ");
+              _builder.append(Helpers.CLASSNAME_OSGISERVICEFACTORY, "");
+              _builder.append("(componentFactory);");
+              _builder.newLineIfNotEmpty();
+              _builder.append("\t");
+              _builder.append(bindMethodName, "\t");
+              _builder.append("(osgiComponentFactory);");
+              _builder.newLineIfNotEmpty();
+              return _builder;
+            }
+          };
+          it.setBody(_function);
+        }
+      };
+      annotatedClass.addMethod(bindMethodName, _function_1);
+    }
+    boolean _isEclipseEnvironment = PathHelper.isEclipseEnvironment();
+    boolean _not_2 = (!_isEclipseEnvironment);
+    if (_not_2) {
       this.createOSGiServiceFile(context, null, context, annotatedClass);
     }
   }
@@ -111,7 +145,21 @@ public class ServiceProcessor extends AbstractClassProcessor {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     _builder.newLine();
-    _builder.append("<scr:component xmlns:scr=\"http://www.osgi.org/xmlns/scr/v1.1.0\" name=\"");
+    _builder.append("<scr:component xmlns:scr=\"http://www.osgi.org/xmlns/scr/v1.1.0\" ");
+    _builder.newLine();
+    {
+      String _factory = serviceInfo.getFactory();
+      boolean _isEmpty = _factory.isEmpty();
+      boolean _not = (!_isEmpty);
+      if (_not) {
+        _builder.append("factory=\"");
+        String _factory_1 = serviceInfo.getFactory();
+        _builder.append(_factory_1, "");
+        _builder.append("\"");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.append("name=\"");
     String _name = serviceInfo.getName();
     _builder.append(_name, "");
     _builder.append("\">");
@@ -151,6 +199,20 @@ public class ServiceProcessor extends AbstractClassProcessor {
         String _name_1 = refService.getName();
         _builder.append(_name_1, "\t\t\t");
         _builder.append("\" name=\"IPlugin\" policy=\"static\"/>");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    {
+      ReferencedServiceFactoryInfo[] _referencedServiceFactories = serviceInfo.getReferencedServiceFactories();
+      for(final ReferencedServiceFactoryInfo refServiceFactory : _referencedServiceFactories) {
+        _builder.append("\t\t\t");
+        _builder.append("<reference bind=\"");
+        String _bindMethodName_1 = refServiceFactory.getBindMethodName();
+        _builder.append(_bindMethodName_1, "\t\t\t");
+        _builder.append("\" cardinality=\"0..n\" target=\"(component.factory=");
+        String _name_2 = refServiceFactory.getName();
+        _builder.append(_name_2, "\t\t\t");
+        _builder.append(")\" interface=\"org.osgi.service.component.ComponentFactory\" name=\"IPlugin\" policy=\"static\"/>");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -207,8 +269,21 @@ public class ServiceProcessor extends AbstractClassProcessor {
         }
       };
       final List<ReferencedServiceInfo> referencedServices = ListExtensions.<String, ReferencedServiceInfo>map(((List<String>)Conversions.doWrapArray(referencedServicesNames)), _function_1);
-      Object _value_3 = serviceAnnotation.getValue("properties");
-      final String[] properties = ((String[]) _value_3);
+      Object _value_3 = serviceAnnotation.getValue("referencedServiceFactories");
+      final String[] referencedServiceFactoryNames = ((String[]) _value_3);
+      final Function1<String, ReferencedServiceFactoryInfo> _function_2 = new Function1<String, ReferencedServiceFactoryInfo>() {
+        public ReferencedServiceFactoryInfo apply(final String fn) {
+          ReferencedServiceFactoryInfo _xblockexpression = null;
+          {
+            final String bindMethodName = bindMethodMap.get("al.franzis.cheshire.api.service.IServiceFactory");
+            _xblockexpression = new ReferencedServiceFactoryInfo(fn, bindMethodName);
+          }
+          return _xblockexpression;
+        }
+      };
+      final List<ReferencedServiceFactoryInfo> referencedServiceFactories = ListExtensions.<String, ReferencedServiceFactoryInfo>map(((List<String>)Conversions.doWrapArray(referencedServiceFactoryNames)), _function_2);
+      Object _value_4 = serviceAnnotation.getValue("properties");
+      final String[] properties = ((String[]) _value_4);
       final Map<String, String> propertiesMap = new HashMap<String, String>();
       int i = (-1);
       while (((i + 2) < properties.length)) {
@@ -221,8 +296,9 @@ public class ServiceProcessor extends AbstractClassProcessor {
           propertiesMap.put(_get, _get_1);
         }
       }
-      InputOutput.<String>println(("Service properties: " + propertiesMap));
-      _xblockexpression = new ServiceInfo(serviceName, ((ReferencedServiceInfo[])Conversions.unwrapArray(referencedServices, ReferencedServiceInfo.class)), providedServicesNames, propertiesMap);
+      Object _value_5 = serviceAnnotation.getValue("factory");
+      final String factory = ((String) _value_5);
+      _xblockexpression = new ServiceInfo(serviceName, ((ReferencedServiceInfo[])Conversions.unwrapArray(referencedServices, ReferencedServiceInfo.class)), ((ReferencedServiceFactoryInfo[])Conversions.unwrapArray(referencedServiceFactories, ReferencedServiceFactoryInfo.class)), providedServicesNames, factory, propertiesMap);
     }
     return _xblockexpression;
   }

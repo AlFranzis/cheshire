@@ -2,6 +2,7 @@ package al.franzis.cheshire.osgi.proc;
 
 import al.franzis.cheshire.osgi.rt.OSGiModuleFramework;
 import al.franzis.cheshire.osgi.rt.OSGiServiceContext;
+import al.franzis.cheshire.osgi.rt.OSGiServiceFactory;
 import com.google.common.base.Objects;
 import java.util.List;
 import org.eclipse.xtend.lib.macro.declaration.AnnotationReference;
@@ -72,5 +73,9 @@ public class Helpers {
   
   public final static String CLASSNAME_COMPONENTCONTEXT = "org.osgi.service.component.ComponentContext";
   
+  public final static String CLASSNAME_COMPONENTFACTORY = "org.osgi.service.component.ComponentFactory";
+  
   public final static String CLASSNAME_OSGISERVICECONTEXT = OSGiServiceContext.class.getCanonicalName();
+  
+  public final static String CLASSNAME_OSGISERVICEFACTORY = OSGiServiceFactory.class.getCanonicalName();
 }

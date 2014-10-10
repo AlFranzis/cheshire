@@ -14,5 +14,7 @@ public @interface Service {
   public String name();
   public String[] referencedServices() default {};
   public String[] providedServices() default {};
+  public String factory() default "";
+  public String[] referencedServiceFactories() default {};
   public String[] properties() default {};
 }

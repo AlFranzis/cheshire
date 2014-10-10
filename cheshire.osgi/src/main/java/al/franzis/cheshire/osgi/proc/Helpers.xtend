@@ -9,6 +9,7 @@ import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration
 import org.osgi.framework.BundleActivator
 import org.osgi.framework.BundleContext
 import al.franzis.cheshire.osgi.rt.OSGiServiceContext
+import al.franzis.cheshire.osgi.rt.OSGiServiceFactory
 
 class Helpers {
 	
@@ -29,10 +30,11 @@ class Helpers {
 	public static val String ClASSNAME_BUNDLECONTEXT = BundleContext.canonicalName
 	public static val String CLASSNAME_STRING = String.canonicalName
 	public static val String CLASSNAME_OSGIMODULEFRAMEWORK= OSGiModuleFramework.canonicalName
-	// use String not class reference as ComponentContext class is optional dependency and might not be available at runtime
+	// use String not class reference as ComponentContext, ComponentFactory classes are optional dependency and might not be available at runtime
 	public static val String CLASSNAME_COMPONENTCONTEXT = "org.osgi.service.component.ComponentContext"
+	public static val String CLASSNAME_COMPONENTFACTORY = "org.osgi.service.component.ComponentFactory"
 	public static val String CLASSNAME_OSGISERVICECONTEXT = OSGiServiceContext.canonicalName
-	
+	public static val String CLASSNAME_OSGISERVICEFACTORY = OSGiServiceFactory.canonicalName
 	
 }
 	
