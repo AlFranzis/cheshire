@@ -1,6 +1,6 @@
 package al.franzis.cheshire.cdi.proc
 
-import al.franzis.cheshire.cdi.rt.NativeLibHandler
+import al.franzis.cheshire.cdi.rt.NativeOSGiLibraryClauseParser
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor
 import org.eclipse.xtend.lib.macro.CodeGenerationContext
 import org.eclipse.xtend.lib.macro.TransformationContext
@@ -22,24 +22,24 @@ class ModuleManifestProcessor extends AbstractClassProcessor {
       	]
 		
 		val injectAnnotationType = context.newAnnotationReference(Helpers.CLASSNAME_INJECT)
-		val runtimeLibPathProviderType = context.newTypeReference(Helpers.ClASSNAME_IRuntimeLibPathProvider)
+		val runtimeLibPathProviderType = context.newTypeReference(Helpers.ClASSNAME_ICDIRuntimeLibPathProvider)
 		annotatedClass.addField("libPathProvider") [
 			addAnnotation(injectAnnotationType)
     		type = runtimeLibPathProviderType
       	]
       	
       	val nativeClauses = parseNativeClauses(annotatedClass)
-		val libHandler = new NativeLibHandler(nativeClauses);
-		val nativeLibs = libHandler.moduleNativeLibs
+		val libManager = new NativeOSGiLibraryClauseParser(nativeClauses)
+		val nativeLibs = libManager.toStringLiteral
       	
 //		val postConstructAnnotationType = context.findTypeGlobally(Helpers.CLASSNAME_POSTCONSTRUCT)
 		val postConstructAnnotationType = context.newAnnotationReference(Helpers.CLASSNAME_POSTCONSTRUCT)
       	annotatedClass.addMethod("init") [
 			addAnnotation(postConstructAnnotationType)
       		body = ['''
-      			String[] nativeLibsPaths = «nativeLibs»;
-      			String effectiveNativeLibsPaths = «Helpers.CLASSNAME_NATIVELIBHANDLER».effectiveNativeLibsPaths(this, libPathProvider, nativeLibsPaths);
-      			«Helpers.CLASSNAME_NATIVELIBHANDLER».augmentJavaLibraryPath(effectiveNativeLibsPaths);
+      			String[][][] nativeLibsPaths = «nativeLibs»;
+      			String effectiveNativeLibsPathDirs = «Helpers.CLASSNAME_NATIVELIBMANAGER».effectiveNativeLibsPaths(this, libPathProvider, nativeLibsPaths);
+      			«Helpers.CLASSNAME_NATIVELIBMANAGER».augmentJavaLibraryPath(effectiveNativeLibsPathDirs);
       		''']
       	]
 	}

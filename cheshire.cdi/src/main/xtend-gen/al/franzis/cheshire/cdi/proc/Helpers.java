@@ -1,10 +1,10 @@
 package al.franzis.cheshire.cdi.proc;
 
-import al.franzis.cheshire.api.nativecode.IRuntimeLibPathProvider;
+import al.franzis.cheshire.api.nativecode.ICDIRuntimeLibPathProvider;
 import al.franzis.cheshire.api.service.IServiceDefinition;
 import al.franzis.cheshire.cdi.rt.CDIModuleFramework;
 import al.franzis.cheshire.cdi.rt.ICDIModuleManifest;
-import al.franzis.cheshire.cdi.rt.NativeLibHandler;
+import al.franzis.cheshire.cdi.rt.NativeLibManager;
 import com.google.common.base.Objects;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -68,7 +68,7 @@ public class Helpers {
   
   public final static String CLASSNAME_ICDIModuleManifest = ICDIModuleManifest.class.getCanonicalName();
   
-  public final static String ClASSNAME_IRuntimeLibPathProvider = IRuntimeLibPathProvider.class.getCanonicalName();
+  public final static String ClASSNAME_ICDIRuntimeLibPathProvider = ICDIRuntimeLibPathProvider.class.getCanonicalName();
   
   public final static String CLASSNAME_STRING = String.class.getCanonicalName();
   
@@ -76,7 +76,7 @@ public class Helpers {
   
   public final static String CLASSNAME_POSTCONSTRUCT = PostConstruct.class.getCanonicalName();
   
-  public final static String CLASSNAME_NATIVELIBHANDLER = NativeLibHandler.class.getCanonicalName();
+  public final static String CLASSNAME_NATIVELIBMANAGER = NativeLibManager.class.getCanonicalName();
   
   public final static String CLASSNAME_ISERVICEDEFINITION = IServiceDefinition.class.getCanonicalName();
   

@@ -6,13 +6,13 @@ import java.util.List
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import al.franzis.cheshire.cdi.rt.ICDIModuleManifest
-import al.franzis.cheshire.api.nativecode.IRuntimeLibPathProvider
-import al.franzis.cheshire.cdi.rt.NativeLibHandler
 import al.franzis.cheshire.api.service.IServiceDefinition
 import al.franzis.cheshire.cdi.rt.CDIModuleFramework
 import javax.enterprise.inject.Instance
 import javax.inject.Inject
 import javax.annotation.PostConstruct
+import al.franzis.cheshire.cdi.rt.NativeLibManager
+import al.franzis.cheshire.api.nativecode.ICDIRuntimeLibPathProvider
 
 class Helpers {
 	
@@ -30,11 +30,11 @@ class Helpers {
 	}
 	
 	public static val String CLASSNAME_ICDIModuleManifest = ICDIModuleManifest.canonicalName
-	public static val String ClASSNAME_IRuntimeLibPathProvider = IRuntimeLibPathProvider.canonicalName
+	public static val String ClASSNAME_ICDIRuntimeLibPathProvider = ICDIRuntimeLibPathProvider.canonicalName
 	public static val String CLASSNAME_STRING = String.canonicalName
 	public static val String CLASSNAME_INJECT = Inject.canonicalName
 	public static val String CLASSNAME_POSTCONSTRUCT = PostConstruct.canonicalName
-	public static val String CLASSNAME_NATIVELIBHANDLER = NativeLibHandler.canonicalName
+	public static val String CLASSNAME_NATIVELIBMANAGER = NativeLibManager.canonicalName
 	public static val String CLASSNAME_ISERVICEDEFINITION = IServiceDefinition.canonicalName
 	public static val String CLASSNAME_CDIMODULEFRAMEWORK = CDIModuleFramework.canonicalName
 	public static val String CLASSNAME_INSTANCE = Instance.canonicalName

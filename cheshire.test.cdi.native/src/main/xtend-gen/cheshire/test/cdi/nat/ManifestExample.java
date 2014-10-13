@@ -1,7 +1,7 @@
 package cheshire.test.cdi.nat;
 
 import al.franzis.cheshire.api.ModuleManifest;
-import al.franzis.cheshire.api.nativecode.IRuntimeLibPathProvider;
+import al.franzis.cheshire.api.nativecode.ICDIRuntimeLibPathProvider;
 import al.franzis.cheshire.cdi.rt.ICDIModuleManifest;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -20,12 +20,12 @@ public class ManifestExample implements ICDIModuleManifest {
   }
   
   @Inject
-  private IRuntimeLibPathProvider libPathProvider;
+  private ICDIRuntimeLibPathProvider libPathProvider;
   
   @PostConstruct
   public void init() {
-    String[] nativeLibsPaths = new String[] {".\\lib"};
-    String effectiveNativeLibsPaths = al.franzis.cheshire.cdi.rt.NativeLibHandler.effectiveNativeLibsPaths(this, libPathProvider, nativeLibsPaths);
-    al.franzis.cheshire.cdi.rt.NativeLibHandler.augmentJavaLibraryPath(effectiveNativeLibsPaths);
+    String[][][] nativeLibsPaths = new String[][][] {{{"/lib/JNIHelloWorld.dll"}}};
+    String effectiveNativeLibsPathDirs = al.franzis.cheshire.cdi.rt.NativeLibManager.effectiveNativeLibsPaths(this, libPathProvider, nativeLibsPaths);
+    al.franzis.cheshire.cdi.rt.NativeLibManager.augmentJavaLibraryPath(effectiveNativeLibsPathDirs);
   }
 }
