@@ -198,7 +198,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
         _builder.append("\" cardinality=\"0..n\" interface=\"");
         String _name_1 = refService.getName();
         _builder.append(_name_1, "\t\t\t");
-        _builder.append("\" name=\"IPlugin\" policy=\"static\"/>");
+        _builder.append("\" policy=\"static\"/>");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -212,7 +212,7 @@ public class ServiceProcessor extends AbstractClassProcessor {
         _builder.append("\" cardinality=\"0..n\" target=\"(component.factory=");
         String _name_2 = refServiceFactory.getName();
         _builder.append(_name_2, "\t\t\t");
-        _builder.append(")\" interface=\"org.osgi.service.component.ComponentFactory\" name=\"IPlugin\" policy=\"static\"/>");
+        _builder.append(")\" interface=\"org.osgi.service.component.ComponentFactory\" policy=\"static\"/>");
         _builder.newLineIfNotEmpty();
       }
     }

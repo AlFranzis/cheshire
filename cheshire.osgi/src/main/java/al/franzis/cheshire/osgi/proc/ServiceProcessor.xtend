@@ -95,10 +95,10 @@ class ServiceProcessor extends AbstractClassProcessor {
 						</service>
 						
 						«FOR refService : serviceInfo.referencedServices»
-							<reference bind="«refService.bindMethodName»" cardinality="0..n" interface="«refService.name»" name="IPlugin" policy="static"/>
+							<reference bind="«refService.bindMethodName»" cardinality="0..n" interface="«refService.name»" policy="static"/>
 						«ENDFOR»
 						«FOR refServiceFactory : serviceInfo.referencedServiceFactories»
-							<reference bind="«refServiceFactory.bindMethodName»" cardinality="0..n" target="(component.factory=«refServiceFactory.name»)" interface="org.osgi.service.component.ComponentFactory" name="IPlugin" policy="static"/>
+							<reference bind="«refServiceFactory.bindMethodName»" cardinality="0..n" target="(component.factory=«refServiceFactory.name»)" interface="org.osgi.service.component.ComponentFactory" policy="static"/>
 						«ENDFOR»
 			«FOR prop : serviceInfo.properties.entrySet»
 				<property name="«prop.key»" type="String" value="«prop.value»"/>					
